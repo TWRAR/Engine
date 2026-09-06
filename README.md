@@ -118,3 +118,10 @@ These use different key-name formats: `keyboard` combos look like `f8` or
   Administrator in some locked-down environments.
 - Credentials referenced in configs should use `${env:VAR_NAME}` rather
   than being hardcoded, so config files stay safe to commit.
+
+## License
+
+Copyright (C) 2026 Leo Ridgwell
+
+Licensed under the GNU General Public License v3.0 or later - see
+[`LICENSE.md`](LICENSE.md) for the full text.
