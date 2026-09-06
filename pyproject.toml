@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "site-automator"
+dynamic = ["version"]
+description = "YAML-driven Playwright automation for QA/regression testing and data scraping, with a desktop step recorder GUI."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE.md" }
+authors = [{ name = "Leo Ridgwell" }]
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+]
+dependencies = [
+    "playwright>=1.47",
+    "pyyaml>=6.0",
+    "keyboard>=0.13.5",
+    "PySide6>=6.7",
+    "qasync>=0.27",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.24", "Pillow>=10.0"]
+
+[project.scripts]
+site-automator = "automator.runner:main"
+
+[tool.setuptools.packages.find]
+include = ["automator*", "gui*"]
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION.md" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
