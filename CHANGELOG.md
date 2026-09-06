@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [1.0.0] - 2026-09-07
+First stable release - no functional changes since 0.3.0. The action
+registry, GUI, config format, and packaging have held steady long enough
+to commit to semantic versioning going forward: breaking changes to the
+YAML config shape or the action registry's public surface will bump the
+major version from here on.
+
 ## [0.3.0] - 2026-09-06
 ### Added
 - About tab in the GUI: logo, project name/version, blurb, disclaimer text,
