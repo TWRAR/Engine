@@ -14,6 +14,18 @@ ICON_PATH = Path(__file__).resolve().parent / "assets" / "icon.ico"
 
 
 def main() -> None:
+    if sys.platform == "win32":
+        # Without an explicit AppUserModelID, Windows groups this window's
+        # taskbar button under the launching python.exe's own icon instead
+        # of the one set below via setWindowIcon() - this is what actually
+        # controls the taskbar/Alt-Tab icon, setWindowIcon() alone does not.
+        import ctypes
+
+        try:
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("StuxieDev.SiteAutomator")
+        except OSError:
+            pass
+
     app = QApplication(sys.argv)
     if ICON_PATH.exists():
         app.setWindowIcon(QIcon(str(ICON_PATH)))
