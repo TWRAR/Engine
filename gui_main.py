@@ -4,8 +4,10 @@ from pathlib import Path
 
 import qasync
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QDialog
 
+from automator.settings import confirm_disclaimer, load_settings
+from gui.disclaimer import DisclaimerDialog
 from gui.main_window import MainWindow
 
 ICON_PATH = Path(__file__).resolve().parent / "assets" / "icon.ico"
@@ -15,6 +17,12 @@ def main() -> None:
     app = QApplication(sys.argv)
     if ICON_PATH.exists():
         app.setWindowIcon(QIcon(str(ICON_PATH)))
+
+    if not load_settings()["disclaimer_confirmed"]:
+        if DisclaimerDialog().exec() != QDialog.Accepted:
+            return
+        confirm_disclaimer()
+
     loop = qasync.QEventLoop(app)
     asyncio.set_event_loop(loop)
 

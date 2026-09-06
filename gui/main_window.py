@@ -7,6 +7,7 @@ from typing import Any, Optional
 
 import yaml
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -27,14 +28,29 @@ from PySide6.QtWidgets import (
     QSplitter,
     QTableWidget,
     QTableWidgetItem,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
 from qasync import asyncSlot
 
 from automator.actions import ExecutionContext, available_actions
+from automator.metadata import DISCLAIMER_TEXT, PROJECT_NAME, PROJECT_SHORT_NAME, REPO_URL
+from automator.settings import load_settings, save_settings
 from gui.session import BrowserSession, PlaybackController
 from gui.step_forms import StepForm
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+LOGO_PATH = REPO_ROOT / "assets" / "logo.png"
+CHANGELOG_PATH = REPO_ROOT / "CHANGELOG.md"
+VERSION_PATH = REPO_ROOT / "VERSION.md"
+
+
+def _read_version() -> str:
+    try:
+        return VERSION_PATH.read_text(encoding="utf-8").strip()
+    except OSError:
+        return "unknown"
 
 
 def _step_label(step: dict) -> str:
@@ -101,14 +117,21 @@ class MainWindow(QMainWindow):
         self.current_editor_form: Optional[StepForm] = None
         self.current_editor_row: Optional[int] = None
         self.playback: Optional[PlaybackController] = None
+        self.settings = load_settings()
 
         self._build_ui()
+        self._apply_persisted_settings()
 
     # ---------------------------------------------------------------- UI
 
     def _build_ui(self) -> None:
+        tabs = QTabWidget()
+        self.setCentralWidget(tabs)
+        tabs.addTab(self._build_automator_tab(), "Automator")
+        tabs.addTab(self._build_about_tab(), "About")
+
+    def _build_automator_tab(self) -> QWidget:
         central = QWidget()
-        self.setCentralWidget(central)
         root = QVBoxLayout(central)
 
         root.addWidget(self._build_config_bar())
@@ -127,6 +150,90 @@ class MainWindow(QMainWindow):
         self.log_view.setReadOnly(True)
         self.log_view.setMaximumHeight(140)
         root.addWidget(self.log_view)
+        return central
+
+    def _build_about_tab(self) -> QWidget:
+        box = QWidget()
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(10)
+
+        if LOGO_PATH.exists():
+            logo_label = QLabel()
+            logo_label.setPixmap(QPixmap(str(LOGO_PATH)).scaledToHeight(120, Qt.SmoothTransformation))
+            layout.addWidget(logo_label)
+
+        title = QLabel(f"{PROJECT_NAME} ({PROJECT_SHORT_NAME})")
+        title_font = title.font()
+        title_font.setPointSize(title_font.pointSize() + 3)
+        title_font.setBold(True)
+        title.setFont(title_font)
+        layout.addWidget(title)
+
+        layout.addWidget(QLabel(f"Version {_read_version()}"))
+
+        blurb = QLabel(
+            "YAML-driven Playwright automation for QA/regression testing and data "
+            "scraping, with a desktop step recorder."
+        )
+        blurb.setWordWrap(True)
+        layout.addWidget(blurb)
+
+        disclaimer_label = QLabel(DISCLAIMER_TEXT)
+        disclaimer_label.setWordWrap(True)
+        layout.addWidget(disclaimer_label)
+
+        repo_link = QLabel(f'<a href="{REPO_URL}">{REPO_URL}</a>')
+        repo_link.setOpenExternalLinks(True)
+        layout.addWidget(repo_link)
+
+        changelog_header = QHBoxLayout()
+        changelog_header.addWidget(QLabel("Changelog"))
+        reload_btn = QPushButton("Reload")
+        reload_btn.clicked.connect(self._load_changelog)
+        changelog_header.addWidget(reload_btn)
+        changelog_header.addStretch(1)
+        layout.addLayout(changelog_header)
+
+        self.changelog_view = QPlainTextEdit()
+        self.changelog_view.setReadOnly(True)
+        layout.addWidget(self.changelog_view, stretch=1)
+
+        self._load_changelog()
+        return box
+
+    def _load_changelog(self) -> None:
+        try:
+            text = CHANGELOG_PATH.read_text(encoding="utf-8")
+        except OSError as exc:
+            text = f"(Could not read {CHANGELOG_PATH.name}: {exc})"
+        self.changelog_view.setPlainText(text)
+
+    def _apply_persisted_settings(self) -> None:
+        idx = self.channel_combo.findText(self.settings["default_browser_channel"])
+        self.channel_combo.setCurrentIndex(idx if idx >= 0 else 0)
+        self.headless_check.setChecked(self.settings["default_headless"])
+        self.user_data_dir_edit.setText(self.settings["default_user_data_dir"])
+
+        self.channel_combo.currentTextChanged.connect(self._persist_browser_defaults)
+        self.headless_check.toggled.connect(self._persist_browser_defaults)
+        self.user_data_dir_edit.editingFinished.connect(self._persist_browser_defaults)
+
+    def _persist_browser_defaults(self) -> None:
+        self.settings["default_browser_channel"] = self.channel_combo.currentText()
+        self.settings["default_headless"] = self.headless_check.isChecked()
+        self.settings["default_user_data_dir"] = self.user_data_dir_edit.text().strip()
+        save_settings(self.settings)
+
+    def _default_config_dir(self) -> str:
+        last = self.settings.get("last_config_path")
+        if last and Path(last).parent.exists():
+            return str(Path(last).parent)
+        return "configs/"
+
+    def _remember_config_path(self, path: str) -> None:
+        self.settings["last_config_path"] = path
+        save_settings(self.settings)
 
     def _build_config_bar(self) -> QWidget:
         box = QGroupBox("Config")
@@ -543,7 +650,7 @@ class MainWindow(QMainWindow):
             self.hotkeys_table.removeRow(row)
 
     def on_save_config(self) -> None:
-        path, _ = QFileDialog.getSaveFileName(self, "Save config", "configs/", "YAML files (*.yaml *.yml)")
+        path, _ = QFileDialog.getSaveFileName(self, "Save config", self._default_config_dir(), "YAML files (*.yaml *.yml)")
         if not path:
             return
 
@@ -568,10 +675,11 @@ class MainWindow(QMainWindow):
         config = {k: v for k, v in config.items() if v not in (None, {}, [])}
 
         Path(path).write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+        self._remember_config_path(path)
         self._append_log(f"Saved config to {path}")
 
     def on_load_config(self) -> None:
-        path, _ = QFileDialog.getOpenFileName(self, "Load config", "configs/", "YAML files (*.yaml *.yml)")
+        path, _ = QFileDialog.getOpenFileName(self, "Load config", self._default_config_dir(), "YAML files (*.yaml *.yml)")
         if not path:
             return
 
@@ -601,6 +709,7 @@ class MainWindow(QMainWindow):
         output_cfg = config.get("output", {}) or {}
         self.results_file_edit.setText(output_cfg.get("results_file", "") or "")
 
+        self._remember_config_path(path)
         self._append_log(f"Loaded config from {path}")
 
     def closeEvent(self, event) -> None:  # noqa: N802 (Qt override)
