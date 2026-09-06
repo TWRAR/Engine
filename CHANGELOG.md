@@ -2,6 +2,33 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.0] - 2026-09-06
+### Added
+- About tab in the GUI: logo, project name/version, blurb, disclaimer text,
+  a link to the repo, and a live `CHANGELOG.md` viewer with a Reload button.
+  The existing recorder/editor UI now lives in its own "Automator" tab
+  alongside it.
+- First-launch disclaimer dialog (`gui/disclaimer.py`), shown before the
+  main window until accepted; acceptance is persisted so it only shows once.
+- Local GUI settings persistence (`automator/paths.py`, `automator/
+  settings.py`): stored at `%APPDATA%\Automater\configs\settings.json`
+  (Windows) / `~/.local/share/Automater/configs/settings.json` (Linux),
+  deep-merged against defaults so older files backfill new keys. Currently
+  persists the disclaimer acknowledgment, default browser channel/headless/
+  profile dir, and the last config path used for Load/Save Config.
+- `automator/metadata.py`: single source of truth for project name, repo
+  URL, and disclaimer text, read by the About tab and disclaimer dialog.
+- Packaging (`pyproject.toml`): pip-installable (`pip install -e .`), with
+  the version read dynamically from `VERSION.md` so it never drifts from
+  the release flow.
+- Test suite (`tests/`, pytest + pytest-asyncio): 38 tests covering the
+  action registry, `ACTION_SCHEMA`/registry consistency, browser
+  default-detection, settings load/save/merge, and the GUI recorder's
+  event-to-step mapping.
+- GitHub Actions CI (`.github/workflows/ci.yml`), running the test suite on
+  `windows-latest` (required by `automator/browser.py`'s use of `winreg`).
+- `LICENSE.md`: GNU General Public License v3.0.
+
 ## [0.2.0] - 2026-09-06
 ### Added
 - Desktop GUI (`gui_main.py`, PySide6 + qasync): records clicks/form input/
