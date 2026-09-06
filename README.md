@@ -1,4 +1,6 @@
-<img src="assets/logo.png" width="96" height="96" alt="Site Automator logo">
+<p align="center">
+  <img src="assets/logo.png" width="500" alt="Site Automator">
+</p>
 
 # Site Automator
 

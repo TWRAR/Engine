@@ -1,4 +1,8 @@
-# Contributing
+<p align="center">
+  <img src="assets/logo.png" width="500" alt="Site Automator">
+</p>
+
+# Contributing to Site Automator
 
 Personal automation tool for Stux.Group internal QA/regression testing and
 first-party data scraping.
