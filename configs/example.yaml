@@ -1,0 +1,93 @@
+# Example config: copy this file per site/task under configs/.
+# Run with: python main.py --config configs/example.yaml
+
+name: "Stux.Group example QA run"
+
+browser:
+  channel: default               # default | brave | chrome | edge | firefox
+  # channel: "default" auto-detects and launches whatever browser is set as
+  # the Windows default. Set channel to a specific browser to force it, or
+  # give executable_path directly to bypass detection entirely.
+  # executable_path: "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+  # load_extension: "C:\\path\\to\\unpacked\\extension"   # Chromium-based browsers only
+  headless: false
+  viewport:
+    width: 1440
+    height: 900
+
+# Persistent Chrome profile dir - keeps you logged in between runs.
+# Omit to use a fresh temp profile every run.
+user_data_dir: "./.browser-profile"
+
+start_url: "https://stux.group/"
+
+# Pause after every step by default (ms) - handy for watching a run happen,
+# or being gentle with a site's rate limits. Any single step can override
+# this with its own `delay_after` (and/or `delay_before`), in ms.
+default_delay_ms: 200
+
+# Named, reusable step groups. Trigger with {action: run_macro, name: <key>}
+# from `steps`, from another macro, or from a hotkey binding below.
+macros:
+  login:
+    - action: click
+      selector: "#login-button"
+    - action: fill
+      selector: "#username"
+      value: "myuser"
+    - action: fill
+      selector: "#password"
+      value: "${env:STUX_PASSWORD}"   # pulled from an environment variable, never hardcoded
+    - action: click
+      selector: "#submit"
+
+  verify_dashboard_loaded:
+    - action: wait_for_selector
+      selector: ".dashboard-header"
+    - action: assert
+      type: visible
+      selector: ".dashboard-header"
+
+steps:
+  - action: run_macro
+    name: login
+
+  - action: run_macro
+    name: verify_dashboard_loaded
+
+  - action: click
+    selector: "a.nav-pricing"
+    delay_after: 1000    # override the default_delay_ms just for this step
+
+  - action: assert
+    type: url_contains
+    value: "/pricing"
+
+  # Coordinate click, for the rare element with no stable selector.
+  - action: click_coords
+    x: 500
+    y: 300
+
+  - action: scrape
+    selector: ".price-card .price"
+    attribute: text
+    multiple: true
+    save_as: prices
+
+  - action: screenshot
+    path: "output/pricing-page.png"
+
+# Global hotkeys, active for the whole run (system-wide, not just page-focused).
+# Value is "pause", "quit", or a list of steps to run immediately.
+hotkeys:
+  f8: pause
+  f9: quit
+  f10:
+    - action: screenshot
+      path: "output/manual-snapshot.png"
+  f11:
+    - action: run_macro
+      name: verify_dashboard_loaded
+
+output:
+  results_file: "output/results.json"
