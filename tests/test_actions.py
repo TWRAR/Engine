@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -111,3 +112,143 @@ def test_save_results_creates_parent_dir_and_writes_json(tmp_path):
 
     assert out_path.exists()
     assert json.loads(out_path.read_text(encoding="utf-8")) == {"prices": ["1", "2"]}
+
+
+# --- retry / continue_on_error / step_results / screenshots ----------------
+
+async def test_run_step_records_a_passed_step_result():
+    from automator import actions
+
+    async def fake_handler(ctx, step):
+        pass
+
+    actions._REGISTRY["fake"] = fake_handler
+    try:
+        ctx = ExecutionContext(page=None, macros={}, results={})
+        await ctx.run_step({"action": "fake"})
+    finally:
+        del actions._REGISTRY["fake"]
+
+    assert len(ctx.step_results) == 1
+    result = ctx.step_results[0]
+    assert result.index == 1
+    assert result.action == "fake"
+    assert result.status == "passed"
+    assert result.attempts == 1
+    assert result.error is None
+
+
+async def test_run_step_retries_until_success():
+    from automator import actions
+
+    calls = {"n": 0}
+
+    async def flaky_handler(ctx, step):
+        calls["n"] += 1
+        if calls["n"] < 3:
+            raise RuntimeError("not yet")
+
+    actions._REGISTRY["flaky"] = flaky_handler
+    try:
+        ctx = ExecutionContext(page=None, macros={}, results={})
+        await ctx.run_step({"action": "flaky", "retry": {"times": 3}})
+    finally:
+        del actions._REGISTRY["flaky"]
+
+    assert calls["n"] == 3
+    assert ctx.step_results[0].status == "passed"
+    assert ctx.step_results[0].attempts == 3
+
+
+async def test_run_step_raises_after_exhausting_retries():
+    from automator import actions
+
+    async def always_fails(ctx, step):
+        raise RuntimeError("nope")
+
+    actions._REGISTRY["always_fails"] = always_fails
+    try:
+        ctx = ExecutionContext(page=None, macros={}, results={})
+        with pytest.raises(RuntimeError, match="nope"):
+            await ctx.run_step({"action": "always_fails", "retry": {"times": 2}})
+    finally:
+        del actions._REGISTRY["always_fails"]
+
+    assert ctx.step_results[0].status == "failed"
+    assert ctx.step_results[0].attempts == 2
+
+
+async def test_continue_on_error_swallows_the_exception():
+    from automator import actions
+
+    async def always_fails(ctx, step):
+        raise RuntimeError("nope")
+
+    actions._REGISTRY["always_fails"] = always_fails
+    try:
+        ctx = ExecutionContext(page=None, macros={}, results={})
+        await ctx.run_step({"action": "always_fails", "continue_on_error": True})
+    finally:
+        del actions._REGISTRY["always_fails"]
+
+    assert ctx.step_results[0].status == "continued"
+    assert "nope" in ctx.step_results[0].error
+
+
+async def test_on_step_result_hook_is_called():
+    from automator import actions
+
+    async def fake_handler(ctx, step):
+        pass
+
+    actions._REGISTRY["fake"] = fake_handler
+    seen = []
+    try:
+        ctx = ExecutionContext(page=None, macros={}, results={}, on_step_result=seen.append)
+        await ctx.run_step({"action": "fake"})
+    finally:
+        del actions._REGISTRY["fake"]
+
+    assert len(seen) == 1
+    assert seen[0].status == "passed"
+
+
+async def test_failure_screenshot_captured_when_screenshot_dir_set(tmp_path):
+    from automator import actions
+
+    class FakePage:
+        async def screenshot(self, path):
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
+            Path(path).write_bytes(b"fake-png")
+
+    async def always_fails(ctx, step):
+        raise RuntimeError("boom")
+
+    actions._REGISTRY["always_fails"] = always_fails
+    try:
+        ctx = ExecutionContext(page=FakePage(), macros={}, results={}, screenshot_dir=str(tmp_path))
+        with pytest.raises(RuntimeError):
+            await ctx.run_step({"action": "always_fails"})
+    finally:
+        del actions._REGISTRY["always_fails"]
+
+    result = ctx.step_results[0]
+    assert result.screenshot is not None
+    assert Path(result.screenshot).exists()
+
+
+async def test_no_screenshot_attempted_without_screenshot_dir():
+    from automator import actions
+
+    async def always_fails(ctx, step):
+        raise RuntimeError("boom")
+
+    actions._REGISTRY["always_fails"] = always_fails
+    try:
+        ctx = ExecutionContext(page=None, macros={}, results={})
+        with pytest.raises(RuntimeError):
+            await ctx.run_step({"action": "always_fails"})
+    finally:
+        del actions._REGISTRY["always_fails"]
+
+    assert ctx.step_results[0].screenshot is None

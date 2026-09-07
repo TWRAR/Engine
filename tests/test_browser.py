@@ -94,3 +94,69 @@ async def test_launch_context_rejects_load_extension_on_firefox(monkeypatch):
             browser_cfg={"channel": "firefox", "load_extension": "C:/ext"},
             user_data_dir="/tmp/x",
         )
+
+
+async def test_launch_context_passes_video_recording_kwargs(monkeypatch):
+    monkeypatch.setitem(browser._CHANNEL_RESOLVERS, "brave", lambda: ("chromium", "C:/brave.exe"))
+    captured = {}
+
+    class FakeBrowserType:
+        async def launch_persistent_context(self, **kwargs):
+            captured.update(kwargs)
+            return "fake-context"
+
+    class FakePlaywright:
+        chromium = FakeBrowserType()
+
+    result = await browser.launch_context(
+        playwright=FakePlaywright(),
+        browser_cfg={"channel": "brave", "record_video_dir": "output/videos"},
+        user_data_dir="/tmp/x",
+    )
+
+    assert result == "fake-context"
+    assert captured["record_video_dir"] == "output/videos"
+    assert captured["record_video_size"] == {"width": 1440, "height": 900}
+
+
+async def test_launch_context_video_size_defaults_to_custom_viewport(monkeypatch):
+    monkeypatch.setitem(browser._CHANNEL_RESOLVERS, "brave", lambda: ("chromium", "C:/brave.exe"))
+    captured = {}
+
+    class FakeBrowserType:
+        async def launch_persistent_context(self, **kwargs):
+            captured.update(kwargs)
+
+    class FakePlaywright:
+        chromium = FakeBrowserType()
+
+    await browser.launch_context(
+        playwright=FakePlaywright(),
+        browser_cfg={
+            "channel": "brave",
+            "record_video_dir": "output/videos",
+            "viewport": {"width": 800, "height": 600},
+        },
+        user_data_dir="/tmp/x",
+    )
+
+    assert captured["record_video_size"] == {"width": 800, "height": 600}
+
+
+async def test_launch_context_no_video_kwargs_when_not_requested(monkeypatch):
+    monkeypatch.setitem(browser._CHANNEL_RESOLVERS, "brave", lambda: ("chromium", "C:/brave.exe"))
+    captured = {}
+
+    class FakeBrowserType:
+        async def launch_persistent_context(self, **kwargs):
+            captured.update(kwargs)
+
+    class FakePlaywright:
+        chromium = FakeBrowserType()
+
+    await browser.launch_context(
+        playwright=FakePlaywright(), browser_cfg={"channel": "brave"}, user_data_dir="/tmp/x"
+    )
+
+    assert "record_video_dir" not in captured
+    assert "record_video_size" not in captured

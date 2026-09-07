@@ -5,3 +5,6 @@ __pycache__/
 .browser-profile/
 output/
 *.egg-info/
+dist/
+build/
+*.spec

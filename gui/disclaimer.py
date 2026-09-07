@@ -5,15 +5,14 @@ install - see gui_main.py for where this is invoked.
 """
 from __future__ import annotations
 
-from pathlib import Path
-
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
 from automator.metadata import DISCLAIMER_TEXT, PROJECT_NAME
+from automator.paths import APP_ROOT
 
-LOGO_PATH = Path(__file__).resolve().parent.parent / "assets" / "logo.png"
+LOGO_PATH = APP_ROOT / "assets" / "logo.png"
 
 
 class DisclaimerDialog(QDialog):

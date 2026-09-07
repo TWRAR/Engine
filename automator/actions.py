@@ -10,8 +10,10 @@ import asyncio
 import json
 import os
 import re
+import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Awaitable, Callable
+from typing import Any, Awaitable, Callable, Optional
 
 ENV_PATTERN = re.compile(r"\$\{env:([A-Za-z_][A-Za-z0-9_]*)\}")
 
@@ -30,6 +32,24 @@ class ActionError(RuntimeError):
     pass
 
 
+@dataclass
+class StepResult:
+    """One run_step()'s outcome - collected on ExecutionContext.step_results
+    and handed to generate_report() (see automator/report.py) after a run.
+    """
+
+    index: int
+    action: str
+    status: str  # "passed" | "failed" | "continued" (failed but continue_on_error caught it)
+    duration_ms: float
+    attempts: int
+    error: Optional[str] = None
+    screenshot: Optional[str] = None
+
+    def as_dict(self) -> dict:
+        return asdict(self)
+
+
 class ExecutionContext:
     def __init__(
         self,
@@ -37,11 +57,17 @@ class ExecutionContext:
         macros: dict[str, list[dict]],
         results: dict[str, Any],
         default_delay_ms: int = 0,
+        screenshot_dir: Optional[str] = None,
+        on_step_result: Optional[Callable[[StepResult], None]] = None,
     ):
         self.page = page
         self.macros = macros
         self.results = results
         self.default_delay_ms = default_delay_ms
+        self.screenshot_dir = Path(screenshot_dir) if screenshot_dir else None
+        self.on_step_result = on_step_result or (lambda result: None)
+        self.step_results: list[StepResult] = []
+        self._step_counter = 0
 
     async def run_steps(self, steps: list[dict]) -> None:
         for step in steps:
@@ -55,18 +81,67 @@ class ExecutionContext:
                 f"Unknown action: {action_name!r}. "
                 f"Available actions: {', '.join(sorted(_REGISTRY))}"
             )
-        skip_keys = ("action", "delay_before", "delay_after")
+        skip_keys = ("action", "delay_before", "delay_after", "retry", "continue_on_error")
         resolved = {k: resolve_value(v) for k, v in step.items() if k not in skip_keys}
 
         delay_before = step.get("delay_before", 0)
         if delay_before:
             await asyncio.sleep(delay_before / 1000)
 
-        await handler(self, resolved)
+        retry_cfg = step.get("retry") or {}
+        attempts_allowed = max(1, int(retry_cfg.get("times", 1)))
+        retry_delay_ms = retry_cfg.get("delay_ms", 0)
+        continue_on_error = bool(step.get("continue_on_error", False))
+
+        self._step_counter += 1
+        index = self._step_counter
+        started = time.monotonic()
+        last_exc: Optional[Exception] = None
+        used_attempts = 0
+
+        for attempt in range(1, attempts_allowed + 1):
+            used_attempts = attempt
+            try:
+                await handler(self, resolved)
+                last_exc = None
+                break
+            except Exception as exc:  # noqa: BLE001 - re-raised/recorded below, never swallowed silently
+                last_exc = exc
+                if attempt < attempts_allowed and retry_delay_ms:
+                    await asyncio.sleep(retry_delay_ms / 1000)
+
+        duration_ms = (time.monotonic() - started) * 1000
+
+        if last_exc is None:
+            result = StepResult(index, action_name, "passed", duration_ms, used_attempts)
+            self.step_results.append(result)
+            self.on_step_result(result)
+        else:
+            screenshot_path = await self._capture_failure_screenshot(index)
+            status = "continued" if continue_on_error else "failed"
+            result = StepResult(
+                index, action_name, status, duration_ms, used_attempts,
+                error=str(last_exc), screenshot=screenshot_path,
+            )
+            self.step_results.append(result)
+            self.on_step_result(result)
+            if not continue_on_error:
+                raise last_exc
 
         delay_after = step.get("delay_after", self.default_delay_ms)
         if delay_after:
             await asyncio.sleep(delay_after / 1000)
+
+    async def _capture_failure_screenshot(self, index: int) -> Optional[str]:
+        if self.page is None or self.screenshot_dir is None:
+            return None
+        path = self.screenshot_dir / f"step-{index:03d}-failure.png"
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            await self.page.screenshot(path=str(path))
+        except Exception:
+            return None
+        return str(path)
 
 
 ActionHandler = Callable[[ExecutionContext, dict], Awaitable[None]]

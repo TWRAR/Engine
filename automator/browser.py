@@ -136,4 +136,9 @@ async def launch_context(playwright: Playwright, browser_cfg: dict, user_data_di
         executable_path=executable_path,
     )
 
+    record_video_dir = browser_cfg.get("record_video_dir")
+    if record_video_dir:
+        kwargs["record_video_dir"] = record_video_dir
+        kwargs["record_video_size"] = browser_cfg.get("record_video_size") or viewport
+
     return await browser_type.launch_persistent_context(**kwargs)

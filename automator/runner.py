@@ -13,6 +13,8 @@ from playwright.async_api import async_playwright
 from automator.actions import ExecutionContext, save_results
 from automator.browser import launch_context
 from automator.hotkeys import HotkeyListener
+from automator.report import generate_report
+from automator.validate import validate_config
 
 
 async def _drain_hotkeys(ctx: ExecutionContext, queue: "asyncio.Queue[dict[str, Any]]", paused: bool) -> bool:
@@ -65,10 +67,20 @@ async def execute_steps(
 async def run(config_path: str) -> None:
     config = yaml.safe_load(Path(config_path).read_text(encoding="utf-8"))
 
+    validation_errors = validate_config(config)
+    if validation_errors:
+        for err in validation_errors:
+            print(f"[config error] {err}")
+        raise SystemExit(1)
+
     browser_cfg = config.get("browser", {})
     user_data_dir = config.get("user_data_dir") or tempfile.mkdtemp(prefix="automator-profile-")
     macros = config.get("macros", {})
     default_delay_ms = config.get("default_delay_ms", 0)
+
+    output_cfg = config.get("output", {})
+    report_dir = output_cfg.get("report_dir")
+    screenshot_dir = str(Path(report_dir) / "screenshots") if report_dir else None
 
     results: dict[str, Any] = {}
     hotkey_queue: asyncio.Queue = asyncio.Queue()
@@ -80,7 +92,13 @@ async def run(config_path: str) -> None:
     async with async_playwright() as playwright:
         context = await launch_context(playwright, browser_cfg, user_data_dir)
         page = context.pages[0] if context.pages else await context.new_page()
-        ctx = ExecutionContext(page=page, macros=macros, results=results, default_delay_ms=default_delay_ms)
+        ctx = ExecutionContext(
+            page=page,
+            macros=macros,
+            results=results,
+            default_delay_ms=default_delay_ms,
+            screenshot_dir=screenshot_dir,
+        )
 
         if hotkeys_cfg:
             listener = HotkeyListener(loop, hotkey_queue)
@@ -94,10 +112,14 @@ async def run(config_path: str) -> None:
         try:
             await execute_steps(ctx, config.get("steps", []), hotkey_queue)
         finally:
-            output_cfg = config.get("output", {})
             if output_cfg.get("results_file"):
                 save_results(results, output_cfg["results_file"])
                 print(f"Results saved to {output_cfg['results_file']}")
+            if report_dir:
+                _json_path, html_path = generate_report(
+                    ctx.step_results, report_dir, run_name=config.get("name", "Automator run")
+                )
+                print(f"Report written to {html_path}")
             if listener:
                 listener.stop()
             await context.close()
@@ -106,7 +128,22 @@ async def run(config_path: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Stux.Group site QA/regression + scraping automator")
     parser.add_argument("--config", required=True, help="Path to a YAML config file")
+    parser.add_argument(
+        "--validate", action="store_true",
+        help="Validate the config and exit, without launching a browser",
+    )
     args = parser.parse_args()
+
+    if args.validate:
+        config = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
+        errors = validate_config(config)
+        if errors:
+            for err in errors:
+                print(f"[config error] {err}")
+            raise SystemExit(1)
+        print(f"{args.config} is valid.")
+        return
+
     asyncio.run(run(args.config))
 
 

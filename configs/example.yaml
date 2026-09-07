@@ -14,6 +14,8 @@ browser:
   viewport:
     width: 1440
     height: 900
+  # record_video_dir: "output/videos"   # Playwright records a .webm per run;
+  # record_video_size defaults to `viewport` above if omitted.
 
 # Persistent Chrome profile dir - keeps you logged in between runs.
 # Omit to use a fresh temp profile every run.
@@ -58,10 +60,15 @@ steps:
   - action: click
     selector: "a.nav-pricing"
     delay_after: 1000    # override the default_delay_ms just for this step
+    retry:                # flaky click? retry up to 3 times, 500ms apart,
+      times: 3             # before this step is considered failed
+      delay_ms: 500
 
   - action: assert
     type: url_contains
     value: "/pricing"
+    continue_on_error: true   # log the failure and keep going, rather than
+                               # aborting the whole run over one soft check
 
   # Coordinate click, for the rare element with no stable selector.
   - action: click_coords
@@ -91,3 +98,6 @@ hotkeys:
 
 output:
   results_file: "output/results.json"
+  # report_dir: a pass/fail report.html + report.json is written here after
+  # every run, with a screenshot auto-captured for any failed/continued step.
+  report_dir: "output/report"

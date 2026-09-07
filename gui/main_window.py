@@ -36,14 +36,16 @@ from qasync import asyncSlot
 
 from automator.actions import ExecutionContext, available_actions
 from automator.metadata import DISCLAIMER_TEXT, PROJECT_NAME, PROJECT_SHORT_NAME, REPO_URL
+from automator.paths import APP_ROOT
+from automator.report import generate_report
 from automator.settings import load_settings, save_settings
+from automator.validate import validate_config
 from gui.session import BrowserSession, PlaybackController
 from gui.step_forms import StepForm
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-LOGO_PATH = REPO_ROOT / "assets" / "logo.png"
-CHANGELOG_PATH = REPO_ROOT / "CHANGELOG.md"
-VERSION_PATH = REPO_ROOT / "VERSION.md"
+LOGO_PATH = APP_ROOT / "assets" / "logo.png"
+CHANGELOG_PATH = APP_ROOT / "CHANGELOG.md"
+VERSION_PATH = APP_ROOT / "VERSION.md"
 
 
 def _read_version() -> str:
@@ -267,6 +269,11 @@ class MainWindow(QMainWindow):
         layout.addWidget(QLabel("Results file:"))
         self.results_file_edit = QLineEdit()
         layout.addWidget(self.results_file_edit, stretch=1)
+
+        layout.addWidget(QLabel("Report dir:"))
+        self.report_dir_edit = QLineEdit()
+        self.report_dir_edit.setPlaceholderText("e.g. output/report - screenshots + HTML/JSON report on failure")
+        layout.addWidget(self.report_dir_edit, stretch=1)
 
         return box
 
@@ -510,12 +517,30 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Nothing to play", "There are no steps to run.")
             return
 
+        errors = validate_config({"macros": self.macros, "steps": self.steps})
+        if errors:
+            proceed = QMessageBox.question(
+                self,
+                "Config problems found",
+                "The following problems were found:\n\n" + "\n".join(f"- {e}" for e in errors)
+                + "\n\nRun anyway?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No,
+            )
+            if proceed != QMessageBox.Yes:
+                return
+
+        report_dir = self.report_dir_edit.text().strip()
+        screenshot_dir = str(Path(report_dir) / "screenshots") if report_dir else None
+
         results: dict[str, Any] = {}
         ctx = ExecutionContext(
             page=self.session.page,
             macros=self.macros,
             results=results,
             default_delay_ms=self._get_default_delay_ms(),
+            screenshot_dir=screenshot_dir,
+            on_step_result=self._on_step_result,
         )
         self.playback = PlaybackController(ctx)
         self.playback.step_started.connect(
@@ -536,6 +561,16 @@ class MainWindow(QMainWindow):
             Path(output_path).parent.mkdir(parents=True, exist_ok=True)
             Path(output_path).write_text(yaml.safe_dump(results, sort_keys=False), encoding="utf-8")
             self._append_log(f"Results saved to {output_path}")
+
+        if report_dir and ctx.step_results:
+            _json_path, html_path = generate_report(
+                ctx.step_results, report_dir, run_name=self.name_edit.text().strip() or "Automator run"
+            )
+            self._append_log(f"Report written to {html_path}")
+
+    def _on_step_result(self, result) -> None:
+        if result.status == "continued":
+            self._append_log(f"[step {result.index}] {result.action} failed but continued: {result.error}")
 
     def on_toggle_pause(self, checked: bool) -> None:
         if not self.playback:
@@ -669,8 +704,14 @@ class MainWindow(QMainWindow):
             "hotkeys": self._collect_hotkeys(),
         }
         results_file = self.results_file_edit.text().strip()
+        report_dir = self.report_dir_edit.text().strip()
+        output_cfg = {}
         if results_file:
-            config["output"] = {"results_file": results_file}
+            output_cfg["results_file"] = results_file
+        if report_dir:
+            output_cfg["report_dir"] = report_dir
+        if output_cfg:
+            config["output"] = output_cfg
 
         config = {k: v for k, v in config.items() if v not in (None, {}, [])}
 
@@ -708,6 +749,7 @@ class MainWindow(QMainWindow):
 
         output_cfg = config.get("output", {}) or {}
         self.results_file_edit.setText(output_cfg.get("results_file", "") or "")
+        self.report_dir_edit.setText(output_cfg.get("report_dir", "") or "")
 
         self._remember_config_path(path)
         self._append_log(f"Loaded config from {path}")

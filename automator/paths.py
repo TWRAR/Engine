@@ -7,6 +7,7 @@ platform-standard per-user app directory so it survives repo/git updates:
 """
 
 import os
+import sys
 from pathlib import Path
 
 if os.name == "nt":
@@ -18,3 +19,12 @@ USER_DATA_DIR = _base / "Automater"
 
 CONFIGS_DIR = USER_DATA_DIR / "configs"
 CONFIGS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Where bundled read-only app files (assets/, CHANGELOG.md, VERSION.md) live.
+# Under a PyInstaller onefile build, __file__ resolves into the bootloader's
+# temp extraction dir rather than reliably alongside the repo - sys._MEIPASS
+# is the documented, reliable way to find bundled data there instead.
+if getattr(sys, "frozen", False):
+    APP_ROOT = Path(sys._MEIPASS)  # type: ignore[attr-defined]
+else:
+    APP_ROOT = Path(__file__).resolve().parent.parent

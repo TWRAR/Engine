@@ -1,16 +1,16 @@
 import asyncio
 import sys
-from pathlib import Path
 
 import qasync
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QDialog
 
+from automator.paths import APP_ROOT
 from automator.settings import confirm_disclaimer, load_settings
 from gui.disclaimer import DisclaimerDialog
 from gui.main_window import MainWindow
 
-ICON_PATH = Path(__file__).resolve().parent / "assets" / "icon.ico"
+ICON_PATH = APP_ROOT / "assets" / "icon.ico"
 
 
 def main() -> None:

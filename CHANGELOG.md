@@ -2,6 +2,35 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.0] - 2026-09-07
+### Added
+- Config pre-flight validation (`automator/validate.py`): checks every
+  step's action name and required fields, plus `run_macro`/hotkey
+  references, before a browser is ever launched. Runs automatically before
+  every run and is also available standalone via `--validate` (CLI) or a
+  confirmation dialog before Play (GUI).
+- Per-step `retry: {times, delay_ms}` and `continue_on_error: true`, so a
+  flaky step can retry before failing, and one soft failure doesn't have to
+  abort an entire regression run.
+- Automatic failure screenshots and HTML/JSON run reports
+  (`automator/report.py`): set `output.report_dir` (CLI config) or the
+  GUI's "Report dir" field to get a `report.html`/`report.json` per run,
+  with a pass/fail/continued summary, per-step timings, and a screenshot
+  captured for any step that failed.
+- Video recording of the whole browser session via `browser.record_video_dir`
+  (`record_video_size` defaults to `viewport`).
+- `automator/actions.py`: `ExecutionContext.step_results` and the
+  `StepResult` dataclass now track every step's outcome (status, attempts,
+  duration, error, screenshot), feeding both the report and the retry logic.
+- Standalone Windows executables (`build.bat`/`build.sh` + `scripts/
+  build_exe.py`, PyInstaller): `SiteAutomator.exe` (GUI) and
+  `SiteAutomatorCLI.exe` (CLI) - no Python install required on the target
+  machine for the default (existing-browser) setup. `automator/paths.py`'s
+  new `APP_ROOT` resolves bundled `assets/`, `CHANGELOG.md`, and
+  `VERSION.md` correctly under PyInstaller's onefile bootloader (via
+  `sys._MEIPASS`) as well as when run from source, so the GUI's window
+  icon, About-tab logo, and changelog viewer all work in the packaged exe.
+
 ## [1.0.0] - 2026-09-07
 First stable release - no functional changes since 0.3.0. The action
 registry, GUI, config format, and packaging have held steady long enough

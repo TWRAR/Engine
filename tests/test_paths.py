@@ -1,4 +1,8 @@
-from automator.paths import CONFIGS_DIR, USER_DATA_DIR
+import importlib
+import sys
+
+from automator import paths
+from automator.paths import APP_ROOT, CONFIGS_DIR, USER_DATA_DIR
 
 
 def test_user_data_dir_is_named_after_the_project():
@@ -8,3 +12,19 @@ def test_user_data_dir_is_named_after_the_project():
 def test_configs_dir_is_created_under_user_data_dir():
     assert CONFIGS_DIR.parent == USER_DATA_DIR
     assert CONFIGS_DIR.exists()
+
+
+def test_app_root_is_repo_root_when_not_frozen():
+    assert (APP_ROOT / "VERSION.md").exists()
+    assert (APP_ROOT / "assets" / "logo.png").exists()
+
+
+def test_app_root_uses_meipass_when_frozen(monkeypatch, tmp_path):
+    monkeypatch.setattr(sys, "frozen", True, raising=False)
+    monkeypatch.setattr(sys, "_MEIPASS", str(tmp_path), raising=False)
+    try:
+        importlib.reload(paths)
+        assert paths.APP_ROOT == tmp_path
+    finally:
+        monkeypatch.undo()
+        importlib.reload(paths)  # restore the real (non-frozen) APP_ROOT for later tests
