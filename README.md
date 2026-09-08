@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/logo.png" width="500" alt="Site Automator">
+  <img src="assets/logo.png" width="300" alt="Automater">
 </p>
 
-# Site Automator
+# Automater
 
 A standalone Python + Playwright tool for QA/regression testing and data
 scraping on **Stux.Group** sites. Behavior for each run is driven by a YAML
@@ -31,7 +31,7 @@ below to force a specific one instead.
 build.bat
 ```
 
-Builds `dist\SiteAutomator.exe` (the GUI) and `dist\SiteAutomatorCLI.exe`
+Builds `dist\Automater.exe` (the GUI) and `dist\AutomaterCLI.exe`
 (the CLI) with PyInstaller - hand either one to someone without Python
 installed. Since the default `browser.channel` launches the machine's own
 already-installed browser (not Playwright's bundled Chromium), the exe
@@ -111,7 +111,7 @@ config shape.
 
 ## Available actions
 
-See `automator/actions.py` for the full, authoritative list and each
+See `automater/actions.py` for the full, authoritative list and each
 action's fields. Highlights:
 
 - **Navigation**: `goto`, `reload`, `go_back`, `go_forward`
@@ -127,7 +127,7 @@ action's fields. Highlights:
 - **Composition**: `log`, `repeat`, `run_macro`
 
 New action types are added by writing one small async function in
-`automator/actions.py` decorated with `@action("name")` — nothing else in
+`automater/actions.py` decorated with `@action("name")` — nothing else in
 the runner needs to change.
 
 ## Two kinds of "hotkey"
