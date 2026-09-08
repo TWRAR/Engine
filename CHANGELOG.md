@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.4] - 2026-09-08
+### Fixed
+- `LICENSE.md` was a plain-text dump of GPLv3 (hard-wrapped lines, no
+  headings) that rendered as a wall of text. Replaced with the FSF's own
+  Markdown transcription (gnu.org/licenses/gpl-3.0.md) - identical legal
+  text, proper `#`/`##`/`###` headings and paragraph formatting.
+
 ## [1.1.3] - 2026-09-08
 ### Fixed
 - `commit.bat`/`commit.sh` didn't match the Stux.Group reference pattern
