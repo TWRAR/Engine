@@ -1,23 +1,27 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal
+REM Automater - Git commit + tag script (Windows)
+REM Commits whatever's staged/unstaged and tags it with the version
+REM currently in VERSION.md, read dynamically so this script never goes
+REM stale the way a hardcoded version number does.
 
-if "%~1"=="" (
-    echo Usage: commit.bat "commit message"
-    exit /b 1
-)
-
-set /p VERSION=<VERSION.md
-set TAG=v%VERSION%
+set "DIR=%~dp0"
+set /p VERSION=<"%DIR%VERSION.md"
 
 git add -A
-git commit -m "%~1"
-
-git rev-parse "%TAG%" >nul 2>&1
-if %errorlevel%==0 (
-    echo Tag %TAG% already exists, skipping tag creation.
+git diff --cached --quiet
+if errorlevel 1 (
+    git commit -m "Release v%VERSION%" -m "See CHANGELOG.md for details."
 ) else (
-    git tag -a "%TAG%" -m "Release %TAG%"
-    echo Created tag %TAG%
+    echo Nothing to commit - tagging the current HEAD as v%VERSION%.
 )
 
-endlocal
+git rev-parse "v%VERSION%" >nul 2>&1
+if errorlevel 1 (
+    git tag -a "v%VERSION%" -m "Automater v%VERSION%"
+    echo Tagged v%VERSION%.
+) else (
+    echo Tag v%VERSION% already exists - skipping.
+)
+
+echo Push with: git push origin main --tags

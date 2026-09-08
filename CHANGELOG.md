@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.3] - 2026-09-08
+### Fixed
+- `commit.bat`/`commit.sh` didn't match the Stux.Group reference pattern
+  (see Stuxs.Tools/Downl.one): they required a hand-typed commit message
+  and always ran `git commit` even with nothing staged. Now they take no
+  argument, auto-generate `Release vX.Y.Z` (from `VERSION.md`) as the
+  commit message, skip the commit (but still tag) when there's nothing to
+  commit, and resolve `VERSION.md` relative to the script's own location
+  instead of assuming the caller's cwd.
+
 ## [1.1.2] - 2026-09-08
 ### Fixed
 - Logo (`assets/logo.png`) cursor mark looked blurry/low-res - it was

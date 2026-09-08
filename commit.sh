@@ -1,20 +1,30 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+# Automater - Git commit + tag script
+# Commits whatever's staged/unstaged and tags it with the version currently
+# in VERSION.md, read dynamically so this script never goes stale the way a
+# hardcoded version number does.
+set -e
 
-if [ -z "${1:-}" ]; then
-  echo "Usage: ./commit.sh \"commit message\"" >&2
-  exit 1
-fi
-
-VERSION=$(tr -d '[:space:]' < VERSION.md)
-TAG="v${VERSION}"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VERSION="$(tr -d '[:space:]' < "$DIR/VERSION.md")"
 
 git add -A
-git commit -m "$1"
+if ! git diff --cached --quiet; then
+    git commit -m "$(cat <<EOF
+Release v${VERSION}
 
-if git rev-parse "$TAG" >/dev/null 2>&1; then
-  echo "Tag $TAG already exists, skipping tag creation."
+See CHANGELOG.md for details.
+EOF
+)"
 else
-  git tag -a "$TAG" -m "Release $TAG"
-  echo "Created tag $TAG"
+    echo "Nothing to commit - tagging the current HEAD as v${VERSION}."
 fi
+
+if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+    echo "Tag v${VERSION} already exists - skipping."
+else
+    git tag -a "v${VERSION}" -m "Automater v${VERSION}"
+    echo "Tagged v${VERSION}."
+fi
+
+echo "Push with: git push origin main --tags"

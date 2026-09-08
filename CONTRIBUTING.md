@@ -38,7 +38,8 @@ pytest
 2. Bump `VERSION.md` (semantic versioning).
 3. Update `README.md` if behavior changed.
 4. Run the test suite (`pytest`) - keep it green.
-5. Run `commit.bat "message"` (or `commit.sh` on POSIX) - it commits and
-   tags `vX.Y.Z` from `VERSION.md`.
+5. Run `commit.bat` (or `commit.sh` on POSIX) - it commits everything
+   staged/unstaged as `Release vX.Y.Z` and tags `vX.Y.Z`, both read from
+   `VERSION.md`.
 6. Optionally, `build.bat` (or `build.sh`) to refresh the standalone
    `dist/Automater.exe` / `AutomaterCLI.exe` for that release.
