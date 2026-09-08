@@ -117,7 +117,7 @@ async def run(config_path: str) -> None:
                 print(f"Results saved to {output_cfg['results_file']}")
             if report_dir:
                 _json_path, html_path = generate_report(
-                    ctx.step_results, report_dir, run_name=config.get("name", "Automator run")
+                    ctx.step_results, report_dir, run_name=config.get("name", "Automater run")
                 )
                 print(f"Report written to {html_path}")
             if listener:

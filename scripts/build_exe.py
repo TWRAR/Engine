@@ -1,5 +1,5 @@
-"""Builds standalone Windows executables with PyInstaller: SiteAutomator.exe
-(the GUI) and SiteAutomatorCLI.exe (the CLI).
+"""Builds standalone Windows executables with PyInstaller: Automater.exe
+(the GUI) and AutomaterCLI.exe (the CLI).
 
 Run with: python scripts/build_exe.py
 Requires the 'build' extra: pip install -e ".[build]"
@@ -44,7 +44,7 @@ def build_gui() -> None:
     # changelog) in the packaged exe.
     PyInstaller.__main__.run([
         str(REPO_ROOT / "gui_main.py"),
-        "--name=SiteAutomator",
+        "--name=Automater",
         "--windowed",
         f"--icon={ICON}",
         f"--add-data={REPO_ROOT / 'assets'};assets",
@@ -57,19 +57,19 @@ def build_gui() -> None:
 def build_cli() -> None:
     PyInstaller.__main__.run([
         str(REPO_ROOT / "main.py"),
-        "--name=SiteAutomatorCLI",
+        "--name=AutomaterCLI",
         "--console",
         *COMMON_ARGS,
     ])
 
 
 def main() -> None:
-    print(f"Building Site Automator v{VERSION} standalone executables...")
+    print(f"Building Automater v{VERSION} standalone executables...")
     build_gui()
     build_cli()
     print(f"\nDone. Output in {DIST_DIR}:")
-    print(f"  - SiteAutomator.exe     (GUI, double-click to run)")
-    print(f"  - SiteAutomatorCLI.exe  (CLI, run with --config <file.yaml>)")
+    print(f"  - Automater.exe     (GUI, double-click to run)")
+    print(f"  - AutomaterCLI.exe  (CLI, run with --config <file.yaml>)")
 
 
 if __name__ == "__main__":

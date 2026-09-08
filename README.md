@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" width="300" alt="Automater">
+  <img src="assets/logo.png" width="500" alt="Automater">
 </p>
 
 # Automater
@@ -155,3 +155,7 @@ Copyright (C) 2026 Leo Ridgwell
 
 Licensed under the GNU General Public License v3.0 or later - see
 [`LICENSE.md`](LICENSE.md) for the full text.
+
+---
+
+*Built & Maintained by <img src="https://github.com/StuxieDev.png" height="14" alt="StuxieDev" valign="middle"> [StuxieDev](https://github.com/StuxieDev).*

@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.1] - 2026-09-08
+### Fixed
+- Standardized the project's display name to **Automater** everywhere -
+  window title, GUI tab label, About tab, standalone exe names
+  (`Automater.exe`/`AutomaterCLI.exe`), and docs previously read "Site
+  Automator" or "Automator" inconsistently.
+- Full text logo (`assets/logo.png`) - previously just the square icon
+  upscaled, now the mark plus the "Automater" wordmark.
+
 ## [1.1.0] - 2026-09-07
 ### Added
 - Config pre-flight validation (`automator/validate.py`): checks every

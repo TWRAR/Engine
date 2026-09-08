@@ -35,7 +35,7 @@ from PySide6.QtWidgets import (
 from qasync import asyncSlot
 
 from automator.actions import ExecutionContext, available_actions
-from automator.metadata import DISCLAIMER_TEXT, PROJECT_NAME, PROJECT_SHORT_NAME, REPO_URL
+from automator.metadata import DISCLAIMER_TEXT, PROJECT_NAME, REPO_URL
 from automator.paths import APP_ROOT
 from automator.report import generate_report
 from automator.settings import load_settings, save_settings
@@ -107,7 +107,7 @@ class AddActionDialog(QDialog):
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Stux.Group Site Automator")
+        self.setWindowTitle("Automater")
 
         self.session = BrowserSession()
         self.session.step_recorded.connect(self._on_step_recorded)
@@ -129,7 +129,7 @@ class MainWindow(QMainWindow):
     def _build_ui(self) -> None:
         tabs = QTabWidget()
         self.setCentralWidget(tabs)
-        tabs.addTab(self._build_automator_tab(), "Automator")
+        tabs.addTab(self._build_automator_tab(), "Automater")
         tabs.addTab(self._build_about_tab(), "About")
 
     def _build_automator_tab(self) -> QWidget:
@@ -165,7 +165,7 @@ class MainWindow(QMainWindow):
             logo_label.setPixmap(QPixmap(str(LOGO_PATH)).scaledToHeight(120, Qt.SmoothTransformation))
             layout.addWidget(logo_label)
 
-        title = QLabel(f"{PROJECT_NAME} ({PROJECT_SHORT_NAME})")
+        title = QLabel(PROJECT_NAME)
         title_font = title.font()
         title_font.setPointSize(title_font.pointSize() + 3)
         title_font.setBold(True)
@@ -564,7 +564,7 @@ class MainWindow(QMainWindow):
 
         if report_dir and ctx.step_results:
             _json_path, html_path = generate_report(
-                ctx.step_results, report_dir, run_name=self.name_edit.text().strip() or "Automator run"
+                ctx.step_results, report_dir, run_name=self.name_edit.text().strip() or "Automater run"
             )
             self._append_log(f"Report written to {html_path}")
 

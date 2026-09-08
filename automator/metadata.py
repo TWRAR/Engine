@@ -3,8 +3,7 @@
 See VERSION.md for the version number itself.
 """
 
-PROJECT_NAME = "Site Automator"
-PROJECT_SHORT_NAME = "Automater"
+PROJECT_NAME = "Automater"
 REPO_URL = "https://github.com/StuxieDev/Automater"
 AUTHOR_NAME = "StuxieDev"
 AUTHOR_URL = "https://github.com/StuxieDev"
