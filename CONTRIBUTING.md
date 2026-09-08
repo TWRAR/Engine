@@ -16,13 +16,13 @@ first-party data scraping.
 
 ## Adding a new action type
 
-Add a small async function to `automator/actions.py` decorated with
+Add a small async function to `automater/actions.py` decorated with
 `@action("your_action_name")`. It receives the shared `ExecutionContext`
 (page, macros, results dict) and the resolved step dict. No other file
 needs to change - the runner and hotkey system dispatch by name
-automatically. Add a matching entry to `automator/schema.py`'s
+automatically. Add a matching entry to `automater/schema.py`'s
 `ACTION_SCHEMA` too, so the GUI's Add Action dialog and config validation
-(`automator/validate.py`) both pick it up - `tests/test_schema.py` fails
+(`automater/validate.py`) both pick it up - `tests/test_schema.py` fails
 the build if the two ever drift out of sync.
 
 ## Running tests

@@ -1,6 +1,6 @@
 import pytest
 
-from automator import browser
+from automater import browser
 
 
 def test_find_first_returns_existing_path(tmp_path):

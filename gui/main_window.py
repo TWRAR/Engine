@@ -34,12 +34,12 @@ from PySide6.QtWidgets import (
 )
 from qasync import asyncSlot
 
-from automator.actions import ExecutionContext, available_actions
-from automator.metadata import DISCLAIMER_TEXT, PROJECT_NAME, REPO_URL
-from automator.paths import APP_ROOT
-from automator.report import generate_report
-from automator.settings import load_settings, save_settings
-from automator.validate import validate_config
+from automater.actions import ExecutionContext, available_actions
+from automater.metadata import DISCLAIMER_TEXT, PROJECT_NAME, REPO_URL
+from automater.paths import APP_ROOT
+from automater.report import generate_report
+from automater.settings import load_settings, save_settings
+from automater.validate import validate_config
 from gui.session import BrowserSession, PlaybackController
 from gui.step_forms import StepForm
 
@@ -129,10 +129,10 @@ class MainWindow(QMainWindow):
     def _build_ui(self) -> None:
         tabs = QTabWidget()
         self.setCentralWidget(tabs)
-        tabs.addTab(self._build_automator_tab(), "Automater")
+        tabs.addTab(self._build_automater_tab(), "Automater")
         tabs.addTab(self._build_about_tab(), "About")
 
-    def _build_automator_tab(self) -> QWidget:
+    def _build_automater_tab(self) -> QWidget:
         central = QWidget()
         root = QVBoxLayout(central)
 
@@ -480,7 +480,7 @@ class MainWindow(QMainWindow):
         browser_cfg["channel"] = self.channel_combo.currentText()
         browser_cfg["headless"] = self.headless_check.isChecked()
 
-        user_data_dir = self.user_data_dir_edit.text().strip() or tempfile.mkdtemp(prefix="automator-profile-")
+        user_data_dir = self.user_data_dir_edit.text().strip() or tempfile.mkdtemp(prefix="automater-profile-")
         start_url = self.start_url_edit.text().strip() or None
 
         try:

@@ -1,6 +1,6 @@
 import json
 
-from automator import settings
+from automater import settings
 
 
 def test_load_settings_creates_file_with_defaults(tmp_path, monkeypatch):

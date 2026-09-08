@@ -10,11 +10,11 @@ from typing import Any
 import yaml
 from playwright.async_api import async_playwright
 
-from automator.actions import ExecutionContext, save_results
-from automator.browser import launch_context
-from automator.hotkeys import HotkeyListener
-from automator.report import generate_report
-from automator.validate import validate_config
+from automater.actions import ExecutionContext, save_results
+from automater.browser import launch_context
+from automater.hotkeys import HotkeyListener
+from automater.report import generate_report
+from automater.validate import validate_config
 
 
 async def _drain_hotkeys(ctx: ExecutionContext, queue: "asyncio.Queue[dict[str, Any]]", paused: bool) -> bool:
@@ -74,7 +74,7 @@ async def run(config_path: str) -> None:
         raise SystemExit(1)
 
     browser_cfg = config.get("browser", {})
-    user_data_dir = config.get("user_data_dir") or tempfile.mkdtemp(prefix="automator-profile-")
+    user_data_dir = config.get("user_data_dir") or tempfile.mkdtemp(prefix="automater-profile-")
     macros = config.get("macros", {})
     default_delay_ms = config.get("default_delay_ms", 0)
 
@@ -126,7 +126,7 @@ async def run(config_path: str) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Stux.Group site QA/regression + scraping automator")
+    parser = argparse.ArgumentParser(description="Stux.Group site QA/regression + scraping automater")
     parser.add_argument("--config", required=True, help="Path to a YAML config file")
     parser.add_argument(
         "--validate", action="store_true",

@@ -38,7 +38,7 @@ COMMON_ARGS = [
 
 def build_gui() -> None:
     # The About tab and disclaimer dialog read assets/logo.png, CHANGELOG.md,
-    # and VERSION.md at runtime via automator.paths.APP_ROOT (which resolves
+    # and VERSION.md at runtime via automater.paths.APP_ROOT (which resolves
     # to sys._MEIPASS in a frozen build) - bundle them as data so those
     # lookups succeed instead of silently no-op'ing (missing icon/logo/blank
     # changelog) in the packaged exe.

@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    # automator/browser.py uses winreg (Windows-only) for default-browser
+    # automater/browser.py uses winreg (Windows-only) for default-browser
     # detection, so the test suite only runs on Windows.
     runs-on: windows-latest
     steps:

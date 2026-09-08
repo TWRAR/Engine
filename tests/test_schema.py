@@ -1,5 +1,5 @@
-from automator.actions import available_actions
-from automator.schema import ACTION_SCHEMA
+from automater.actions import available_actions
+from automater.schema import ACTION_SCHEMA
 
 VALID_FIELD_TYPES = {"str", "int", "float", "bool", "choice", "text"}
 

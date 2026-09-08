@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from automator.actions import StepResult
-from automator.report import generate_report
+from automater.actions import StepResult
+from automater.report import generate_report
 
 
 def _results():

@@ -1,8 +1,8 @@
 import importlib
 import sys
 
-from automator import paths
-from automator.paths import APP_ROOT, CONFIGS_DIR, USER_DATA_DIR
+from automater import paths
+from automater.paths import APP_ROOT, CONFIGS_DIR, USER_DATA_DIR
 
 
 def test_user_data_dir_is_named_after_the_project():

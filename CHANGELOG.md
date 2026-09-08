@@ -10,6 +10,9 @@ All notable changes to this project are documented here.
   Automator" or "Automator" inconsistently.
 - Full text logo (`assets/logo.png`) - previously just the square icon
   upscaled, now the mark plus the "Automater" wordmark.
+- Renamed the `automator` Python package to `automater` (import paths,
+  `pyproject.toml` package/script name, PyInstaller `--paths`) so the
+  module name matches the project name everywhere.
 
 ## [1.1.0] - 2026-09-07
 ### Added

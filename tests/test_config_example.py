@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-from automator.actions import available_actions
+from automater.actions import available_actions
 
 CONFIG_PATH = Path(__file__).resolve().parent.parent / "configs" / "example.yaml"
 

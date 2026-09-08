@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 
-from automator.actions import StepResult
+from automater.actions import StepResult
 
 _STATUS_COLOR = {"passed": "#2da44e", "failed": "#cf222e", "continued": "#bf8700"}
 

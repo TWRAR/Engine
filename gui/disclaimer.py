@@ -1,6 +1,6 @@
 """First-launch disclaimer gate, shown before the main window until accepted.
 
-Acceptance is persisted via automator.settings so it only shows once per
+Acceptance is persisted via automater.settings so it only shows once per
 install - see gui_main.py for where this is invoked.
 """
 from __future__ import annotations
@@ -9,8 +9,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
-from automator.metadata import DISCLAIMER_TEXT, PROJECT_NAME
-from automator.paths import APP_ROOT
+from automater.metadata import DISCLAIMER_TEXT, PROJECT_NAME
+from automater.paths import APP_ROOT
 
 LOGO_PATH = APP_ROOT / "assets" / "logo.png"
 

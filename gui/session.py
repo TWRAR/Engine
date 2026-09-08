@@ -14,8 +14,8 @@ from typing import Any, Optional
 from PySide6.QtCore import QObject, Signal
 from playwright.async_api import Frame, Page, async_playwright
 
-from automator.actions import ExecutionContext
-from automator.browser import launch_context
+from automater.actions import ExecutionContext
+from automater.browser import launch_context
 from gui.recorder_js import RECORDER_JS
 
 _NAV_QUIET_WINDOW = 0.7  # seconds; navigations sooner than this after an
