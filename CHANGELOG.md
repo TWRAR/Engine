@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.2] - 2026-09-08
+### Fixed
+- Logo (`assets/logo.png`) cursor mark looked blurry/low-res - it was
+  upscaled from the small 256px `icon.png` raster. Now drawn as a crisp
+  vector shape (the same coordinates as `scripts/generate_icon.py`'s
+  `draw_glyph()`) at high resolution instead.
+
 ## [1.1.1] - 2026-09-08
 ### Fixed
 - Standardized the project's display name to **Automater** everywhere -
