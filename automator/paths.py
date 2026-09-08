@@ -1,4 +1,4 @@
-"""Filesystem layout for Site Automator's per-install runtime state.
+"""Filesystem layout for Automater's per-install runtime state.
 
 User data (GUI settings, the disclaimer acknowledgment) lives in the
 platform-standard per-user app directory so it survives repo/git updates:

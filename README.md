@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/logo.png" width="500" alt="Site Automator">
+  <img src="assets/logo.png" width="500" alt="Automater">
 </p>
 
-# Site Automator
+# Automater
 
 A standalone Python + Playwright tool for QA/regression testing and data
 scraping on **Stux.Group** sites. Behavior for each run is driven by a YAML
@@ -31,7 +31,7 @@ below to force a specific one instead.
 build.bat
 ```
 
-Builds `dist\SiteAutomator.exe` (the GUI) and `dist\SiteAutomatorCLI.exe`
+Builds `dist\Automater.exe` (the GUI) and `dist\AutomaterCLI.exe`
 (the CLI) with PyInstaller - hand either one to someone without Python
 installed. Since the default `browser.channel` launches the machine's own
 already-installed browser (not Playwright's bundled Chromium), the exe
@@ -155,3 +155,7 @@ Copyright (C) 2026 Leo Ridgwell
 
 Licensed under the GNU General Public License v3.0 or later - see
 [`LICENSE.md`](LICENSE.md) for the full text.
+
+---
+
+*Built & Maintained by <img src="https://github.com/StuxieDev.png" height="14" alt="StuxieDev" valign="middle"> [StuxieDev](https://github.com/StuxieDev).*

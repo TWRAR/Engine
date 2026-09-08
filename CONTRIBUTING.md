@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/logo.png" width="500" alt="Site Automator">
+  <img src="assets/logo.png" width="500" alt="Automater">
 </p>
 
-# Contributing to Site Automator
+# Contributing to Automater
 
 Personal automation tool for Stux.Group internal QA/regression testing and
 first-party data scraping.
@@ -41,4 +41,4 @@ pytest
 5. Run `commit.bat "message"` (or `commit.sh` on POSIX) - it commits and
    tags `vX.Y.Z` from `VERSION.md`.
 6. Optionally, `build.bat` (or `build.sh`) to refresh the standalone
-   `dist/SiteAutomator.exe` / `SiteAutomatorCLI.exe` for that release.
+   `dist/Automater.exe` / `AutomaterCLI.exe` for that release.

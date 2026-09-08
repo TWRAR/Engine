@@ -22,7 +22,7 @@ def main() -> None:
         import ctypes
 
         try:
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("StuxieDev.SiteAutomator")
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("StuxieDev.Automater")
         except OSError:
             pass
 
