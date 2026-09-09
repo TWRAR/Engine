@@ -1,6 +1,8 @@
 """Main GUI window: recorder + step editor + playback control."""
 from __future__ import annotations
 
+import html
+import re
 import tempfile
 from pathlib import Path
 from typing import Any, Optional
@@ -29,6 +31,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QTabWidget,
+    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -46,6 +49,7 @@ from gui.step_forms import StepForm
 LOGO_PATH = APP_ROOT / "assets" / "logo.png"
 CHANGELOG_PATH = APP_ROOT / "CHANGELOG.md"
 VERSION_PATH = APP_ROOT / "VERSION.md"
+ACCENT_COLOR = "#7C5CFF"
 
 
 def _read_version() -> str:
@@ -53,6 +57,61 @@ def _read_version() -> str:
         return VERSION_PATH.read_text(encoding="utf-8").strip()
     except OSError:
         return "unknown"
+
+
+def _render_changelog_html(markdown_text: str) -> str:
+    """Render CHANGELOG.md's `##`/`###` headings, `- ` bullets, `**bold**`,
+    and `` `code` `` spans as rich text instead of showing raw markdown."""
+
+    def inline(text: str) -> str:
+        text = html.escape(text)
+        text = re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", text)
+        text = re.sub(
+            r"`([^`]+)`",
+            r'<code style="background:rgba(127,127,127,0.18); padding:1px 4px; '
+            r'border-radius:3px;">\1</code>',
+            text,
+        )
+        return text
+
+    parts: list[str] = []
+    in_list = False
+
+    def close_list() -> None:
+        nonlocal in_list
+        if in_list:
+            parts.append("</ul>")
+            in_list = False
+
+    for line in markdown_text.splitlines():
+        stripped = line.strip()
+        if line.startswith("## "):
+            close_list()
+            parts.append(
+                f'<h2 style="color:{ACCENT_COLOR}; font-size:14pt; margin:14px 0 4px 0;">'
+                f"{inline(line[3:].strip())}</h2>"
+            )
+        elif line.startswith("### "):
+            close_list()
+            parts.append(
+                f'<h3 style="color:gray; font-size:11pt; margin:8px 0 2px 0;">'
+                f"{inline(line[4:].strip())}</h3>"
+            )
+        elif line.startswith("# "):
+            continue  # top-level title is already shown above as its own label
+        elif line.startswith("- ") or line.startswith("  - "):
+            if not in_list:
+                parts.append('<ul style="margin:0 0 6px 0; padding-left:20px;">')
+                in_list = True
+            parts.append(f"<li>{inline(line.lstrip('- ').strip())}</li>")
+        elif stripped:
+            close_list()
+            parts.append(f'<p style="margin:4px 0;">{inline(stripped)}</p>')
+        else:
+            close_list()
+
+    close_list()
+    return "\n".join(parts)
 
 
 def _step_label(step: dict) -> str:
@@ -197,7 +256,7 @@ class MainWindow(QMainWindow):
         changelog_header.addStretch(1)
         layout.addLayout(changelog_header)
 
-        self.changelog_view = QPlainTextEdit()
+        self.changelog_view = QTextEdit()
         self.changelog_view.setReadOnly(True)
         layout.addWidget(self.changelog_view, stretch=1)
 
@@ -208,8 +267,9 @@ class MainWindow(QMainWindow):
         try:
             text = CHANGELOG_PATH.read_text(encoding="utf-8")
         except OSError as exc:
-            text = f"(Could not read {CHANGELOG_PATH.name}: {exc})"
-        self.changelog_view.setPlainText(text)
+            self.changelog_view.setPlainText(f"(Could not read {CHANGELOG_PATH.name}: {exc})")
+            return
+        self.changelog_view.setHtml(_render_changelog_html(text))
 
     def _apply_persisted_settings(self) -> None:
         idx = self.channel_combo.findText(self.settings["default_browser_channel"])

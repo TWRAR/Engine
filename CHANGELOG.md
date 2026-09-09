@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.5] - 2026-09-09
+### Changed
+- About tab's changelog viewer now renders `CHANGELOG.md` as rich text
+  (headings, bullet points, **bold**, and `code` spans) instead of showing
+  raw markdown, matching the TIGHC project's changelog viewer.
+
 ## [1.1.4] - 2026-09-08
 ### Fixed
 - `LICENSE.md` was a plain-text dump of GPLv3 (hard-wrapped lines, no
