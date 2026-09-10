@@ -9,6 +9,17 @@ def test_user_data_dir_is_named_after_the_project():
     assert USER_DATA_DIR.name == "Automater"
 
 
+def test_macos_uses_application_support(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "darwin")
+    monkeypatch.delenv("APPDATA", raising=False)
+    try:
+        importlib.reload(paths)
+        assert paths.USER_DATA_DIR == paths.Path.home() / "Library" / "Application Support" / "Automater"
+    finally:
+        monkeypatch.undo()
+        importlib.reload(paths)  # restore the real platform's USER_DATA_DIR for later tests
+
+
 def test_configs_dir_is_created_under_user_data_dir():
     assert CONFIGS_DIR.parent == USER_DATA_DIR
     assert CONFIGS_DIR.exists()

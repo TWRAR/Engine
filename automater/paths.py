@@ -3,15 +3,18 @@
 User data (GUI settings, the disclaimer acknowledgment) lives in the
 platform-standard per-user app directory so it survives repo/git updates:
   Windows: %APPDATA%\\Automater\\
-  Linux:   ~/.local/share/Automater/
+  macOS:   ~/Library/Application Support/Automater/
+  Linux:   ~/.local/share/Automater/ (or $XDG_DATA_HOME/Automater/)
 """
 
 import os
 import sys
 from pathlib import Path
 
-if os.name == "nt":
+if sys.platform == "win32":
     _base = Path(os.environ.get("APPDATA", Path.home()))
+elif sys.platform == "darwin":
+    _base = Path.home() / "Library" / "Application Support"
 else:
     _base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
 

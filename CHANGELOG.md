@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.6] - 2026-09-10
+### Fixed
+- `automater/paths.py` resolved macOS's per-user data directory using the
+  Linux `~/.local/share` convention instead of the actual macOS one. Now
+  branches on `sys.platform` (`win32`/`darwin`/other) so macOS correctly
+  uses `~/Library/Application Support/Automater/`.
+
 ## [1.1.5] - 2026-09-09
 ### Changed
 - About tab's changelog viewer now renders `CHANGELOG.md` as rich text
