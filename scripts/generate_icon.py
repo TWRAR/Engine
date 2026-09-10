@@ -13,7 +13,8 @@ ASSETS = Path(__file__).resolve().parent.parent / "assets"
 ASSETS.mkdir(exist_ok=True)
 
 RED = (220, 38, 38, 255)        # red-600, the project's icon/acronym color
-RED_LIGHT = (248, 113, 113, 255)  # red-400, the tagline color
+RED_LIGHT = (185, 28, 28, 255)  # red-700, the tagline color - darker than
+                                 # red-400 so it stays legible on white
 WHITE = (255, 255, 255, 255)
 
 FONT_BOLD = r"C:\Windows\Fonts\arialbd.ttf"
@@ -21,23 +22,32 @@ FONT_REGULAR = r"C:\Windows\Fonts\arial.ttf"
 
 
 def draw_glyph(size: int) -> Image.Image:
-    """Cursor (recording clicks) + play triangle (replaying them), white on red."""
+    """Cursor + recording dot (recording clicks) and a play triangle
+    (replaying them), white on red."""
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
     radius = size * 0.22
     draw.rounded_rectangle([0, 0, size - 1, size - 1], radius=radius, fill=RED)
 
-    # Cursor-arrow glyph, scaled to a unit box then mapped into the canvas.
+    # Three even marks in a clean two-row grid: a recording dot and a play
+    # triangle side by side on top, the cursor spanning the row below - no
+    # touching or crowding between any of the three.
+    dot_r = size * 0.12
+    dot_cx, dot_cy = size * 0.29, size * 0.26
+    draw.ellipse(
+        [dot_cx - dot_r, dot_cy - dot_r, dot_cx + dot_r, dot_cy + dot_r],
+        fill=WHITE,
+    )
+
+    play_unit = [(0.54, 0.13), (0.54, 0.39), (0.86, 0.26)]
+    draw.polygon([(x * size, y * size) for x, y in play_unit], fill=WHITE)
+
     cursor_unit = [
-        (0.28, 0.14), (0.28, 0.74), (0.44, 0.59),
-        (0.54, 0.82), (0.64, 0.78), (0.53, 0.55), (0.74, 0.55),
+        (0.32, 0.46), (0.32, 0.864), (0.443, 0.767),
+        (0.524, 0.92), (0.598, 0.892), (0.516, 0.739), (0.68, 0.739),
     ]
     draw.polygon([(x * size, y * size) for x, y in cursor_unit], fill=WHITE)
-
-    # Play triangle, standing in for "replay" next to the cursor's "record".
-    play_unit = [(0.62, 0.14), (0.62, 0.38), (0.84, 0.26)]
-    draw.polygon([(x * size, y * size) for x, y in play_unit], fill=WHITE)
 
     return img
 

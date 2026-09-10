@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [2.0.1] - 2026-09-10
+### Changed
+- Refined the icon/wordmark logo (`assets/icon.*`, `assets/logo.png`):
+  the cursor, recording dot, and play triangle are now laid out as a
+  clean two-row grid instead of overlapping, and the wordmark's tagline
+  is a darker red for better contrast on white.
+- README footer now reads "Written & Maintained by StuxieDev" followed
+  by "A StuxieDev Project" (previously "Built & Maintained by", reversed
+  order).
+
 ## [2.0.0] - 2026-09-10
 ### Changed
 - **Renamed the project to TWRAR** (The Website Recorder And Replayer) and

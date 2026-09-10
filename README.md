@@ -4,8 +4,6 @@
 
 # TWRAR — The Website Recorder And Replayer
 
-*<a href="https://projects.stuxie.dev">A <img src="https://github.com/StuxieDev.png" height="16" alt="StuxieDev" valign="middle"> StuxieDev Project</a>*
-
 A desktop GUI records your clicks, form input, and navigation on a real page
 into a launchable step profile — save it as YAML, then replay it any time to
 QA/regression-test or scrape **Stux.Group** sites. A profile is a list of
@@ -164,4 +162,6 @@ Licensed under the GNU General Public License v3.0 or later - see
 
 ---
 
-*Built & Maintained by <img src="https://github.com/StuxieDev.png" height="14" alt="StuxieDev" valign="middle"> [StuxieDev](https://stuxie.dev).*
+*Written & Maintained by <img src="https://github.com/StuxieDev.png" height="14" alt="StuxieDev" valign="middle"> [StuxieDev](https://stuxie.dev).*
+
+*<a href="https://projects.stuxie.dev">A StuxieDev Project</a>*
