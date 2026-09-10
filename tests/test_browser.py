@@ -1,6 +1,10 @@
+import sys
+
 import pytest
 
 from twrar import browser
+
+windows_only = pytest.mark.skipif(sys.platform != "win32", reason="Windows registry-specific")
 
 
 def test_find_first_returns_existing_path(tmp_path):
@@ -21,6 +25,7 @@ def test_find_first_returns_none_when_nothing_found(monkeypatch, tmp_path):
     assert browser._find_first([str(missing)]) is None
 
 
+@windows_only
 def test_detect_default_browser_falls_back_when_registry_read_fails(monkeypatch):
     def raise_oserror(*args, **kwargs):
         raise OSError("registry key not found")
@@ -33,6 +38,7 @@ def test_detect_default_browser_falls_back_when_registry_read_fails(monkeypatch)
     assert path == "C:/brave.exe"
 
 
+@windows_only
 def test_detect_default_browser_maps_known_progid(monkeypatch):
     class FakeKey:
         def __enter__(self):
@@ -50,6 +56,7 @@ def test_detect_default_browser_maps_known_progid(monkeypatch):
     assert path == "C:/firefox.exe"
 
 
+@windows_only
 def test_detect_default_browser_unrecognized_progid_falls_back_to_brave(monkeypatch):
     class FakeKey:
         def __enter__(self):

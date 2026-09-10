@@ -1,6 +1,6 @@
 """Config pre-flight validation: catches unknown actions, missing required
-fields, and dangling macro/hotkey references before a browser is ever
-launched, instead of failing mid-run on step 40 of 50.
+fields, and dangling macro references before a browser is ever launched,
+instead of failing mid-run on step 40 of 50.
 """
 from __future__ import annotations
 
@@ -65,16 +65,5 @@ def validate_config(config: dict) -> list[str]:
         steps = []
     for i, step in enumerate(steps):
         _validate_step(step, f"step {i + 1}", macro_names, errors)
-
-    hotkeys = config.get("hotkeys") or {}
-    if not isinstance(hotkeys, dict):
-        errors.append("\"hotkeys\" must be a mapping of key combo -> binding")
-        hotkeys = {}
-    for combo, binding in hotkeys.items():
-        if isinstance(binding, list):
-            for i, step in enumerate(binding):
-                _validate_step(step, f"hotkey {combo!r} step {i + 1}", macro_names, errors)
-        elif binding not in ("pause", "quit"):
-            errors.append(f"hotkey {combo!r}: binding must be \"pause\", \"quit\", or a list of steps")
 
     return errors

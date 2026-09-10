@@ -1,13 +1,14 @@
 # Example config: copy this file per site/task under configs/.
-# Run with: python main.py --config configs/example.yaml
+# Open with the GUI's Load Config button, or run: python gui_main.py
 
 name: "Stux.Group example QA run"
 
 browser:
   channel: default               # default | brave | chrome | edge | firefox
-  # channel: "default" auto-detects and launches whatever browser is set as
-  # the Windows default. Set channel to a specific browser to force it, or
-  # give executable_path directly to bypass detection entirely.
+  # channel: "default" auto-detects and launches the OS's registered default
+  # browser on Windows (falls back to Brave/bundled Chromium on Linux/macOS).
+  # Set channel to a specific browser to force it, or give executable_path
+  # directly to bypass detection entirely.
   # executable_path: "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
   # load_extension: "C:\\path\\to\\unpacked\\extension"   # Chromium-based browsers only
   headless: false
@@ -29,7 +30,7 @@ start_url: "https://stux.group/"
 default_delay_ms: 200
 
 # Named, reusable step groups. Trigger with {action: run_macro, name: <key>}
-# from `steps`, from another macro, or from a hotkey binding below.
+# from `steps` or from another macro.
 macros:
   login:
     - action: click
@@ -83,18 +84,6 @@ steps:
 
   - action: screenshot
     path: "output/pricing-page.png"
-
-# Global hotkeys, active for the whole run (system-wide, not just page-focused).
-# Value is "pause", "quit", or a list of steps to run immediately.
-hotkeys:
-  f8: pause
-  f9: quit
-  f10:
-    - action: screenshot
-      path: "output/manual-snapshot.png"
-  f11:
-    - action: run_macro
-      name: verify_dashboard_loaded
 
 output:
   results_file: "output/results.json"

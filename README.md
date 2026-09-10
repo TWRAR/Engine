@@ -7,8 +7,8 @@
 A desktop GUI records your clicks, form input, and navigation on a real page
 into a launchable step profile — save it as YAML, then replay it any time to
 QA/regression-test or scrape **Stux.Group** sites. A profile is a list of
-steps to run, optional named macros to group steps, and optional global
-hotkeys; hand-writing the YAML instead of recording it works just as well.
+steps to run and optional named macros to group steps; hand-writing the
+YAML instead of recording it works just as well.
 
 Website: https://twrar.stuxie.dev  
 Repository: https://github.com/TWRAR/Engine  
@@ -25,27 +25,28 @@ pip install -r requirements.txt
 playwright install chromium   # only needed if you don't set browser.executable_path
 ```
 
-By default the tool launches whatever browser is set as the Windows
-default (Brave/Chrome/Edge/Firefox all supported) - see `browser.channel`
-below to force a specific one instead.
+On Windows, `browser.channel: default` reads the OS's registered default
+browser (Brave/Chrome/Edge/Firefox all supported); on Linux/macOS it falls
+back to Brave, then Playwright's own bundled Chromium - see
+`browser.channel` below to force a specific one on any platform.
 
-### Standalone .exe (no Python required)
+### Standalone executable (no Python required)
 
-```
-build.bat
-```
+Windows: `build.bat` — Linux/macOS: `./build.sh`
 
-Builds `dist\TWRAR.exe` (the GUI) and `dist\TWRARCLI.exe`
-(the CLI) with PyInstaller - hand either one to someone without Python
-installed. Since the default `browser.channel` launches the machine's own
-already-installed browser (not Playwright's bundled Chromium), the exe
-works out of the box for the normal case; only a config that leaves
-Playwright to use its own Chromium needs `playwright install chromium` run
-once on the target machine.
+Builds `dist/TWRAR` with PyInstaller - `.exe` on Windows, a macOS `.app`
+bundle, a plain binary on Linux - hand it to someone without Python
+installed. PyInstaller can't cross-compile, so build on each platform you
+want a native executable for (prebuilt Windows/macOS/Linux executables
+are also published on the
+[Releases page](https://github.com/TWRAR/Engine/releases) for every
+tagged version). Since the default `browser.channel` launches the
+machine's own already-installed browser (not Playwright's bundled
+Chromium), the build works out of the box for the normal case; only a
+config that leaves Playwright to use its own Chromium needs
+`playwright install chromium` run once on the target machine.
 
 ## Usage
-
-### GUI (recorder + step editor)
 
 ```
 python gui_main.py
@@ -58,33 +59,24 @@ python gui_main.py
    delete, or select a run of steps and **Group into Macro**.
 4. **Add Action** inserts a step type the recorder can't capture (e.g.
    `assert`, `sleep`, `scrape`, `evaluate`, `click_coords`) by hand.
-5. **Save Config** writes everything to a YAML file compatible with
-   `main.py`; **▶ Play** replays the current steps right there in the GUI,
-   with **⏸ Pause** / **⏹ Stop** controlling a run in progress.
+5. **Save Config** writes everything to a YAML profile you can reopen with
+   **Load Config**; **▶ Play** replays the current steps right there in the
+   GUI, with **⏸ Pause** / **⏹ Stop** controlling a run in progress.
 
 Recorded selectors are a best-effort guess (id, then `data-testid`/`name`/
 `aria-label`, then a DOM path) - review them in the editor before relying on
 a recording for regression testing.
 
-### CLI (existing configs, no GUI)
-
-```
-python main.py --config configs/example.yaml
-python main.py --config configs/example.yaml --validate   # check it, don't run it
-```
-
-`--validate` checks every step's action name and required fields (and every
-`run_macro`/hotkey reference) against the action registry and exits - no
-browser is launched. The same check also runs automatically before a normal
-run, so a typo fails in milliseconds instead of mid-run.
-
-Copy `configs/example.yaml` per site/task. See its comments for the full
-config shape.
+Config validation (unknown actions, missing required fields, dangling
+`run_macro` references) runs automatically before every Play, so a typo
+fails immediately instead of mid-run. Copy `configs/example.yaml` per
+site/task as a starting point. See its comments for the full config shape.
 
 ## Config shape
 
-- `browser.channel`: `default` (auto-detects and launches whatever browser
-  is set as the Windows default - Brave/Chrome/Edge/Firefox), or force one
+- `browser.channel`: `default` (on Windows, auto-detects and launches the
+  OS's registered default browser - Brave/Chrome/Edge/Firefox; on
+  Linux/macOS, falls back to Brave then bundled Chromium), or force one
   with `brave` | `chrome` | `edge` | `firefox`, or bypass detection entirely
   with `browser.executable_path`. Plus `headless`, `viewport`, `args`,
   `load_extension` (Chromium-based browsers only), and `record_video_dir`
@@ -100,13 +92,6 @@ config shape.
   can also set `retry: {times: N, delay_ms: N}` to retry a flaky step before
   giving up, and/or `continue_on_error: true` to log a failure and move on
   instead of aborting the whole run over one step.
-- `hotkeys`: `<key combo>: pause | quit | [<steps>]`. These are **global**
-  (system-wide, via the `keyboard` package), so they work even while the
-  browser window has focus. Useful for pausing a run, taking an ad-hoc
-  screenshot, or re-running a verification macro without restarting.
-  Only used by the CLI (`main.py`) - the GUI is controlled via its own
-  Play/Pause/Stop buttons instead, to avoid a hotkey firing steps into the
-  page while a GUI-driven run is already in progress.
 - `output.results_file`: where `scrape`/`evaluate` values get dumped as JSON.
 - `output.report_dir`: writes `report.json` and `report.html` here after the
   run - a pass/fail/continued summary per step, with timings, and a
@@ -131,25 +116,14 @@ action's fields. Highlights:
 - **Composition**: `log`, `repeat`, `run_macro`
 
 New action types are added by writing one small async function in
-`twrar/actions.py` decorated with `@action("name")` — nothing else in
-the runner needs to change.
-
-## Two kinds of "hotkey"
-
-- **Global control hotkeys** (`hotkeys` in the config): real keypresses on
-  your machine, handled by the `keyboard` package, that pause/resume/quit
-  the run or fire a step list.
-- **Simulated key presses sent to the page** (`press` action in a step or
-  macro): Playwright sends the key combo to the browser itself, as part of
-  the automation sequence (e.g. a site's own keyboard shortcut).
-
-These use different key-name formats: `keyboard` combos look like `f8` or
-`ctrl+shift+k`; Playwright's `press` action uses `Control+Shift+K`.
+`twrar/actions.py` decorated with `@action("name")` — nothing else needs
+to change.
 
 ## Notes
 
-- `keyboard`'s global hook can require running the terminal as
-  Administrator in some locked-down environments.
+- The `press` action sends a simulated key combo to the page itself (e.g.
+  a site's own keyboard shortcut), using Playwright's format:
+  `Control+Shift+K`.
 - Credentials referenced in configs should use `${env:VAR_NAME}` rather
   than being hardcoded, so config files stay safe to commit.
 

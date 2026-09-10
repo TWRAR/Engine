@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            asset_name: windows
+          - os: macos-latest
+            asset_name: macos
+          - os: ubuntu-latest
+            asset_name: linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[build]"
+
+      - name: Build executables
+        run: python scripts/build_exe.py
+
+      - name: Collect build artifacts
+        shell: bash
+        run: |
+          mkdir -p dist_out
+          if [ -f "dist/TWRAR.exe" ]; then
+            cp "dist/TWRAR.exe" "dist_out/TWRAR-${{ matrix.asset_name }}.exe"
+          elif [ -d "dist/TWRAR.app" ]; then
+            # --windowed on macOS produces an app bundle, not a flat binary.
+            zip -r -q "dist_out/TWRAR-${{ matrix.asset_name }}.zip" "dist/TWRAR.app"
+          elif [ -f "dist/TWRAR" ]; then
+            cp "dist/TWRAR" "dist_out/TWRAR-${{ matrix.asset_name }}"
+          fi
+          ls -la dist_out
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.asset_name }}
+          path: dist_out/*
+
+  release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Flatten artifact folders
+        run: |
+          mkdir -p release_files
+          find artifacts -type f -exec cp {} release_files/ \;
+          ls -la release_files
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release_files/*
+          generate_release_notes: true

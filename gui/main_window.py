@@ -29,8 +29,6 @@ from PySide6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QSplitter,
-    QTableWidget,
-    QTableWidgetItem,
     QTabWidget,
     QTextEdit,
     QVBoxLayout,
@@ -202,7 +200,7 @@ class MainWindow(QMainWindow):
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self._build_steps_panel())
         splitter.addWidget(self._build_editor_panel())
-        splitter.addWidget(self._build_macros_and_hotkeys_panel())
+        splitter.addWidget(self._build_macros_panel())
         splitter.setStretchFactor(0, 2)
         splitter.setStretchFactor(1, 2)
         splitter.setStretchFactor(2, 1)
@@ -430,7 +428,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(apply_btn)
         return box
 
-    def _build_macros_and_hotkeys_panel(self) -> QWidget:
+    def _build_macros_panel(self) -> QWidget:
         container = QWidget()
         layout = QVBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -443,24 +441,6 @@ class MainWindow(QMainWindow):
         del_macro_btn.clicked.connect(self.on_delete_macro)
         macros_layout.addWidget(del_macro_btn)
         layout.addWidget(macros_box)
-
-        hotkeys_box = QGroupBox("Hotkeys (saved into config, used by main.py)")
-        hotkeys_layout = QVBoxLayout(hotkeys_box)
-        self.hotkeys_table = QTableWidget(0, 2)
-        self.hotkeys_table.setHorizontalHeaderLabels(["Key combo", "Binding"])
-        hotkeys_layout.addWidget(self.hotkeys_table)
-        hk_buttons = QHBoxLayout()
-        add_hk_btn = QPushButton("Add row")
-        add_hk_btn.clicked.connect(self.on_add_hotkey_row)
-        hk_buttons.addWidget(add_hk_btn)
-        remove_hk_btn = QPushButton("Remove row")
-        remove_hk_btn.clicked.connect(self.on_remove_hotkey_row)
-        hk_buttons.addWidget(remove_hk_btn)
-        hotkeys_layout.addLayout(hk_buttons)
-        hint = QLabel("Binding: \"pause\", \"quit\", or a macro name.\nThe GUI itself is controlled by the Play/Pause/Stop buttons above,\nnot these hotkeys - they only take effect via main.py.")
-        hint.setWordWrap(True)
-        hotkeys_layout.addWidget(hint)
-        layout.addWidget(hotkeys_box)
 
         return container
 
@@ -485,45 +465,6 @@ class MainWindow(QMainWindow):
         self.macros_list.clear()
         for name, steps in self.macros.items():
             self.macros_list.addItem(f"{name} ({len(steps)} steps)")
-
-    def _refresh_hotkeys_table(self, hotkeys: dict) -> None:
-        self.hotkeys_table.setRowCount(0)
-        for combo, binding in hotkeys.items():
-            row = self.hotkeys_table.rowCount()
-            self.hotkeys_table.insertRow(row)
-            self.hotkeys_table.setItem(row, 0, QTableWidgetItem(combo))
-            label = binding if isinstance(binding, str) else self._binding_to_label(binding)
-            self.hotkeys_table.setItem(row, 1, QTableWidgetItem(label))
-
-    @staticmethod
-    def _binding_to_label(binding: Any) -> str:
-        if isinstance(binding, list) and len(binding) == 1 and binding[0].get("action") == "run_macro":
-            return binding[0]["name"]
-        return "custom"
-
-    def _collect_hotkeys(self) -> dict:
-        hotkeys: dict[str, Any] = {}
-        for row in range(self.hotkeys_table.rowCount()):
-            combo_item = self.hotkeys_table.item(row, 0)
-            binding_item = self.hotkeys_table.item(row, 1)
-            if not combo_item or not binding_item:
-                continue
-            combo = combo_item.text().strip()
-            binding_text = binding_item.text().strip()
-            if not combo or not binding_text:
-                continue
-            if binding_text in ("pause", "quit"):
-                hotkeys[combo] = binding_text
-            elif binding_text in self.macros:
-                hotkeys[combo] = [{"action": "run_macro", "name": binding_text}]
-            else:
-                QMessageBox.warning(
-                    self,
-                    "Unknown hotkey binding",
-                    f"{binding_text!r} is not \"pause\", \"quit\", or a known macro name "
-                    f"- skipped for {combo!r}.",
-                )
-        return hotkeys
 
     def _clear_editor(self) -> None:
         while self.editor_layout.count():
@@ -735,17 +676,6 @@ class MainWindow(QMainWindow):
             self._refresh_steps_list()
             self.steps_list.setCurrentRow(insert_at)
 
-    def on_add_hotkey_row(self) -> None:
-        row = self.hotkeys_table.rowCount()
-        self.hotkeys_table.insertRow(row)
-        self.hotkeys_table.setItem(row, 0, QTableWidgetItem("f8"))
-        self.hotkeys_table.setItem(row, 1, QTableWidgetItem("pause"))
-
-    def on_remove_hotkey_row(self) -> None:
-        row = self.hotkeys_table.currentRow()
-        if row >= 0:
-            self.hotkeys_table.removeRow(row)
-
     def on_save_config(self) -> None:
         path, _ = QFileDialog.getSaveFileName(self, "Save config", self._default_config_dir(), "YAML files (*.yaml *.yml)")
         if not path:
@@ -763,7 +693,6 @@ class MainWindow(QMainWindow):
             "default_delay_ms": self._get_default_delay_ms(),
             "macros": self.macros,
             "steps": self.steps,
-            "hotkeys": self._collect_hotkeys(),
         }
         results_file = self.results_file_edit.text().strip()
         report_dir = self.report_dir_edit.text().strip()
@@ -806,8 +735,6 @@ class MainWindow(QMainWindow):
         self._refresh_steps_list()
         self._refresh_macros_list()
         self._clear_editor()
-
-        self._refresh_hotkeys_table(config.get("hotkeys", {}) or {})
 
         output_cfg = config.get("output", {}) or {}
         self.results_file_edit.setText(output_cfg.get("results_file", "") or "")

@@ -1,31 +1,53 @@
 """Browser launching: defaults to the user's actual default browser, via a
 persistent Playwright context. Brave/Chrome/Edge/Firefox all supported.
+
+Default-browser *detection* (reading the OS's notion of "default browser")
+is Windows-only (the registry). On Linux/macOS, `channel: default` falls
+straight back to Brave/bundled Chromium - explicit channels
+(brave/chrome/edge/firefox) still work everywhere via the path/PATH lookup
+below.
 """
 from __future__ import annotations
 
 import shutil
-import winreg
+import sys
 from pathlib import Path
 from typing import Any, Optional
 
 from playwright.async_api import BrowserContext, Playwright
 
-BRAVE_PATHS = [
-    r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
-    r"C:\Program Files (x86)\BraveSoftware\Brave-Browser\Application\brave.exe",
-]
-CHROME_PATHS = [
-    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-]
-EDGE_PATHS = [
-    r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
-    r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
-]
-FIREFOX_PATHS = [
-    r"C:\Program Files\Mozilla Firefox\firefox.exe",
-    r"C:\Program Files (x86)\Mozilla Firefox\firefox.exe",
-]
+if sys.platform == "win32":
+    import winreg
+else:
+    winreg = None  # type: ignore[assignment]
+
+if sys.platform == "win32":
+    BRAVE_PATHS = [
+        r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
+        r"C:\Program Files (x86)\BraveSoftware\Brave-Browser\Application\brave.exe",
+    ]
+    CHROME_PATHS = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    ]
+    EDGE_PATHS = [
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+    ]
+    FIREFOX_PATHS = [
+        r"C:\Program Files\Mozilla Firefox\firefox.exe",
+        r"C:\Program Files (x86)\Mozilla Firefox\firefox.exe",
+    ]
+elif sys.platform == "darwin":
+    BRAVE_PATHS = ["/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"]
+    CHROME_PATHS = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
+    EDGE_PATHS = ["/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"]
+    FIREFOX_PATHS = ["/Applications/Firefox.app/Contents/MacOS/firefox"]
+else:
+    BRAVE_PATHS = ["/usr/bin/brave-browser", "/usr/bin/brave"]
+    CHROME_PATHS = ["/usr/bin/google-chrome", "/usr/bin/google-chrome-stable"]
+    EDGE_PATHS = ["/usr/bin/microsoft-edge", "/usr/bin/microsoft-edge-stable"]
+    FIREFOX_PATHS = ["/usr/bin/firefox"]
 
 # Maps the registered default-browser ProgId (HKCU UserChoice) to a
 # (playwright browser type, candidate install paths) pair.
@@ -65,8 +87,12 @@ def find_firefox_executable() -> Optional[str]:
 def detect_default_browser() -> tuple[str, Optional[str]]:
     """Reads the Windows default-browser registration and resolves it to
     (playwright browser type, executable path). Falls back to Brave, then
-    Playwright's own bundled Chromium, if detection fails.
+    Playwright's own bundled Chromium, if detection fails - which is also
+    the only behavior available on Linux/macOS, where there's no registry
+    to read.
     """
+    if winreg is None:
+        return "chromium", find_brave_executable()
     try:
         with winreg.OpenKey(
             winreg.HKEY_CURRENT_USER,

@@ -95,7 +95,13 @@ def main() -> None:
     icon_base.save(ASSETS / "icon.png")
     icon_base.save(ASSETS / "icon.ico", sizes=[(s, s) for s in icon_sizes])
 
-    print(f"Wrote {ASSETS / 'logo.png'}, {ASSETS / 'icon.png'}, {ASSETS / 'icon.ico'}")
+    icon_hires = draw_glyph(1024)
+    icon_hires.save(ASSETS / "icon.icns")
+
+    print(
+        f"Wrote {ASSETS / 'logo.png'}, {ASSETS / 'icon.png'}, "
+        f"{ASSETS / 'icon.ico'}, {ASSETS / 'icon.icns'}"
+    )
 
 
 if __name__ == "__main__":

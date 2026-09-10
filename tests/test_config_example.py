@@ -34,13 +34,3 @@ def test_example_config_uses_only_known_actions():
         assert step["action"] in known, f"Unknown action in example.yaml: {step['action']!r}"
 
 
-def test_example_config_hotkey_bindings_reference_known_actions():
-    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
-    known = set(available_actions())
-
-    for combo, binding in config.get("hotkeys", {}).items():
-        if isinstance(binding, list):
-            for step in binding:
-                assert step["action"] in known, f"Unknown action in hotkey {combo!r}: {step['action']!r}"
-        else:
-            assert binding in ("pause", "quit"), f"Unrecognized hotkey binding for {combo!r}: {binding!r}"

@@ -57,23 +57,6 @@ def test_repeat_nested_steps_are_validated():
     assert any("nope" in e for e in errors)
 
 
-def test_hotkey_list_binding_steps_are_validated():
-    config = {"steps": [], "hotkeys": {"f8": [{"action": "nope"}]}}
-    errors = validate_config(config)
-    assert any("hotkey 'f8'" in e for e in errors)
-
-
-def test_hotkey_pause_and_quit_are_valid():
-    config = {"steps": [], "hotkeys": {"f8": "pause", "f9": "quit"}}
-    assert validate_config(config) == []
-
-
-def test_hotkey_invalid_string_binding_is_reported():
-    config = {"steps": [], "hotkeys": {"f8": "nonsense"}}
-    errors = validate_config(config)
-    assert any("f8" in e for e in errors)
-
-
 def test_steps_not_a_list_is_reported():
     assert validate_config({"steps": "oops"}) != []
 
