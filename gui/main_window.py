@@ -1,6 +1,7 @@
 """Main GUI window: recorder + step editor + playback control."""
 from __future__ import annotations
 
+import asyncio
 import html
 import re
 import tempfile
@@ -41,6 +42,7 @@ from twrar.metadata import DISCLAIMER_TEXT, PROJECT_NAME, REPO_URL
 from twrar.paths import APP_ROOT
 from twrar.report import generate_report
 from twrar.settings import load_settings, save_settings
+from twrar.update_check import check_for_update
 from twrar.validate import validate_config
 from gui import theme
 from gui.session import BrowserSession, PlaybackController
@@ -232,6 +234,17 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(QLabel(f"Version {_read_version()}"))
 
+        update_row = QHBoxLayout()
+        self.update_status_label = QLabel("Checking for updates...")
+        self.update_status_label.setTextFormat(Qt.RichText)
+        self.update_status_label.setOpenExternalLinks(True)
+        update_row.addWidget(self.update_status_label)
+        check_update_btn = QPushButton("Check now")
+        check_update_btn.clicked.connect(self.on_check_for_update)
+        update_row.addWidget(check_update_btn)
+        update_row.addStretch(1)
+        layout.addLayout(update_row)
+
         blurb = QLabel(
             "YAML-driven Playwright automation for QA/regression testing and data "
             "scraping, with a desktop step recorder."
@@ -260,7 +273,25 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.changelog_view, stretch=1)
 
         self._load_changelog()
+        self.on_check_for_update()
         return box
+
+    @asyncSlot()
+    async def on_check_for_update(self) -> None:
+        self.update_status_label.setText("Checking for updates...")
+        current = _read_version()
+        loop = asyncio.get_event_loop()
+        try:
+            info = await loop.run_in_executor(None, check_for_update, current)
+        except Exception:
+            info = None
+
+        if info:
+            self.update_status_label.setText(
+                f'<a href="{info["url"]}">Update available: v{info["version"]}</a>'
+            )
+        else:
+            self.update_status_label.setText(f"Up to date (v{current}).")
 
     def _load_changelog(self) -> None:
         try:

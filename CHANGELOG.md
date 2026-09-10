@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## [3.1.0] - 2026-09-10
+### Added
+- **Update checker** (`twrar/update_check.py`): the About tab now checks
+  GitHub for a newer Engine release on launch (and via a "Check now"
+  button), showing a clickable link to the release when one's available.
+  Best-effort - any network failure is treated as "up to date" rather
+  than shown as an error.
+
 ## [3.0.0] - 2026-09-10
 ### Removed
 - **The CLI (`main.py`/`TWRARCLI`) is discontinued.** TWRAR is GUI-only
