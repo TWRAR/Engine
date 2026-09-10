@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 
-from automater.actions import StepResult
+from twrar.actions import StepResult
 
 _STATUS_COLOR = {"passed": "#2da44e", "failed": "#cf222e", "continued": "#bf8700"}
 
@@ -95,7 +95,7 @@ def _render_html(run_name: str, generated_at: str, step_results: list[StepResult
 """
 
 
-def generate_report(step_results: list[StepResult], report_dir: str, run_name: str = "Automater run") -> tuple[str, str]:
+def generate_report(step_results: list[StepResult], report_dir: str, run_name: str = "TWRAR run") -> tuple[str, str]:
     """Writes report.json and report.html into report_dir. Returns (json_path, html_path)."""
     out_dir = Path(report_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

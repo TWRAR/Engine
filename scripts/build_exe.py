@@ -1,5 +1,5 @@
-"""Builds standalone Windows executables with PyInstaller: Automater.exe
-(the GUI) and AutomaterCLI.exe (the CLI).
+"""Builds standalone Windows executables with PyInstaller: TWRAR.exe
+(the GUI) and TWRARCLI.exe (the CLI).
 
 Run with: python scripts/build_exe.py
 Requires the 'build' extra: pip install -e ".[build]"
@@ -38,13 +38,13 @@ COMMON_ARGS = [
 
 def build_gui() -> None:
     # The About tab and disclaimer dialog read assets/logo.png, CHANGELOG.md,
-    # and VERSION.md at runtime via automater.paths.APP_ROOT (which resolves
+    # and VERSION.md at runtime via twrar.paths.APP_ROOT (which resolves
     # to sys._MEIPASS in a frozen build) - bundle them as data so those
     # lookups succeed instead of silently no-op'ing (missing icon/logo/blank
     # changelog) in the packaged exe.
     PyInstaller.__main__.run([
         str(REPO_ROOT / "gui_main.py"),
-        "--name=Automater",
+        "--name=TWRAR",
         "--windowed",
         f"--icon={ICON}",
         f"--add-data={REPO_ROOT / 'assets'};assets",
@@ -57,19 +57,19 @@ def build_gui() -> None:
 def build_cli() -> None:
     PyInstaller.__main__.run([
         str(REPO_ROOT / "main.py"),
-        "--name=AutomaterCLI",
+        "--name=TWRARCLI",
         "--console",
         *COMMON_ARGS,
     ])
 
 
 def main() -> None:
-    print(f"Building Automater v{VERSION} standalone executables...")
+    print(f"Building TWRAR v{VERSION} standalone executables...")
     build_gui()
     build_cli()
     print(f"\nDone. Output in {DIST_DIR}:")
-    print(f"  - Automater.exe     (GUI, double-click to run)")
-    print(f"  - AutomaterCLI.exe  (CLI, run with --config <file.yaml>)")
+    print(f"  - TWRAR.exe     (GUI, double-click to run)")
+    print(f"  - TWRARCLI.exe  (CLI, run with --config <file.yaml>)")
 
 
 if __name__ == "__main__":

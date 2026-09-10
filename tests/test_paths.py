@@ -1,12 +1,12 @@
 import importlib
 import sys
 
-from automater import paths
-from automater.paths import APP_ROOT, CONFIGS_DIR, USER_DATA_DIR
+from twrar import paths
+from twrar.paths import APP_ROOT, CONFIGS_DIR, USER_DATA_DIR
 
 
 def test_user_data_dir_is_named_after_the_project():
-    assert USER_DATA_DIR.name == "Automater"
+    assert USER_DATA_DIR.name == "TWRAR"
 
 
 def test_macos_uses_application_support(monkeypatch):
@@ -14,7 +14,7 @@ def test_macos_uses_application_support(monkeypatch):
     monkeypatch.delenv("APPDATA", raising=False)
     try:
         importlib.reload(paths)
-        assert paths.USER_DATA_DIR == paths.Path.home() / "Library" / "Application Support" / "Automater"
+        assert paths.USER_DATA_DIR == paths.Path.home() / "Library" / "Application Support" / "TWRAR"
     finally:
         monkeypatch.undo()
         importlib.reload(paths)  # restore the real platform's USER_DATA_DIR for later tests

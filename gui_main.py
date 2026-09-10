@@ -5,8 +5,8 @@ import qasync
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QDialog
 
-from automater.paths import APP_ROOT
-from automater.settings import confirm_disclaimer, load_settings
+from twrar.paths import APP_ROOT
+from twrar.settings import confirm_disclaimer, load_settings
 from gui.disclaimer import DisclaimerDialog
 from gui.main_window import MainWindow
 
@@ -22,7 +22,7 @@ def main() -> None:
         import ctypes
 
         try:
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("StuxieDev.Automater")
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("StuxieDev.TWRAR")
         except OSError:
             pass
 

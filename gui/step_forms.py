@@ -1,4 +1,4 @@
-"""Dynamic edit form for a step, built from automater.schema.ACTION_SCHEMA."""
+"""Dynamic edit form for a step, built from twrar.schema.ACTION_SCHEMA."""
 from __future__ import annotations
 
 from typing import Optional
@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from automater.schema import ACTION_SCHEMA
+from twrar.schema import ACTION_SCHEMA
 
 # Fields every action accepts, regardless of type - shown after the
 # action-specific fields.

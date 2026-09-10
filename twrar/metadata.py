@@ -3,10 +3,10 @@
 See VERSION.md for the version number itself.
 """
 
-PROJECT_NAME = "Automater"
-REPO_URL = "https://github.com/StuxieDev/Automater"
+PROJECT_NAME = "TWRAR"
+REPO_URL = "https://github.com/TWRAR/Engine"
 AUTHOR_NAME = "StuxieDev"
-AUTHOR_URL = "https://github.com/StuxieDev"
+AUTHOR_URL = "https://stuxie.dev"
 
 DISCLAIMER_TEXT = (
     "This tool drives a real browser to click, fill, and scrape pages on your "

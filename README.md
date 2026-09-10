@@ -1,14 +1,20 @@
 <p align="center">
-  <img src="assets/logo.png" width="500" alt="Automater">
+  <img src="assets/logo.png" width="500" alt="TWRAR — The Website Recorder And Replayer">
 </p>
 
-# Automater
+# TWRAR — The Website Recorder And Replayer
 
-A standalone Python + Playwright tool for QA/regression testing and data
-scraping on **Stux.Group** sites. Behavior for each run is driven by a YAML
-config: a list of steps to run, optional named macros to group steps, and
-optional global hotkeys. A desktop GUI can record those steps for you
-instead of hand-writing YAML.
+*<a href="https://projects.stuxie.dev">A <img src="https://github.com/StuxieDev.png" height="16" alt="StuxieDev" valign="middle"> StuxieDev Project</a>*
+
+A desktop GUI records your clicks, form input, and navigation on a real page
+into a launchable step profile — save it as YAML, then replay it any time to
+QA/regression-test or scrape **Stux.Group** sites. A profile is a list of
+steps to run, optional named macros to group steps, and optional global
+hotkeys; hand-writing the YAML instead of recording it works just as well.
+
+Website: https://twrar.stuxie.dev  
+Repository: https://github.com/TWRAR/Engine  
+License: [GPL-3.0-or-later](LICENSE.md)
 
 > This tool is intended for sites and content you own or otherwise have
 > explicit authorization to automate. Do not point it at third-party sites
@@ -31,7 +37,7 @@ below to force a specific one instead.
 build.bat
 ```
 
-Builds `dist\Automater.exe` (the GUI) and `dist\AutomaterCLI.exe`
+Builds `dist\TWRAR.exe` (the GUI) and `dist\TWRARCLI.exe`
 (the CLI) with PyInstaller - hand either one to someone without Python
 installed. Since the default `browser.channel` launches the machine's own
 already-installed browser (not Playwright's bundled Chromium), the exe
@@ -111,7 +117,7 @@ config shape.
 
 ## Available actions
 
-See `automater/actions.py` for the full, authoritative list and each
+See `twrar/actions.py` for the full, authoritative list and each
 action's fields. Highlights:
 
 - **Navigation**: `goto`, `reload`, `go_back`, `go_forward`
@@ -127,7 +133,7 @@ action's fields. Highlights:
 - **Composition**: `log`, `repeat`, `run_macro`
 
 New action types are added by writing one small async function in
-`automater/actions.py` decorated with `@action("name")` — nothing else in
+`twrar/actions.py` decorated with `@action("name")` — nothing else in
 the runner needs to change.
 
 ## Two kinds of "hotkey"
@@ -151,11 +157,11 @@ These use different key-name formats: `keyboard` combos look like `f8` or
 
 ## License
 
-Copyright (C) 2026 Leo Ridgwell
+Copyright (C) 2026 StuxieDev
 
 Licensed under the GNU General Public License v3.0 or later - see
 [`LICENSE.md`](LICENSE.md) for the full text.
 
 ---
 
-*Built & Maintained by <img src="https://github.com/StuxieDev.png" height="14" alt="StuxieDev" valign="middle"> [StuxieDev](https://github.com/StuxieDev).*
+*Built & Maintained by <img src="https://github.com/StuxieDev.png" height="14" alt="StuxieDev" valign="middle"> [StuxieDev](https://stuxie.dev).*

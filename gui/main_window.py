@@ -37,12 +37,12 @@ from PySide6.QtWidgets import (
 )
 from qasync import asyncSlot
 
-from automater.actions import ExecutionContext, available_actions
-from automater.metadata import DISCLAIMER_TEXT, PROJECT_NAME, REPO_URL
-from automater.paths import APP_ROOT
-from automater.report import generate_report
-from automater.settings import load_settings, save_settings
-from automater.validate import validate_config
+from twrar.actions import ExecutionContext, available_actions
+from twrar.metadata import DISCLAIMER_TEXT, PROJECT_NAME, REPO_URL
+from twrar.paths import APP_ROOT
+from twrar.report import generate_report
+from twrar.settings import load_settings, save_settings
+from twrar.validate import validate_config
 from gui.session import BrowserSession, PlaybackController
 from gui.step_forms import StepForm
 
@@ -166,7 +166,7 @@ class AddActionDialog(QDialog):
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Automater")
+        self.setWindowTitle("TWRAR")
 
         self.session = BrowserSession()
         self.session.step_recorded.connect(self._on_step_recorded)
@@ -188,10 +188,10 @@ class MainWindow(QMainWindow):
     def _build_ui(self) -> None:
         tabs = QTabWidget()
         self.setCentralWidget(tabs)
-        tabs.addTab(self._build_automater_tab(), "Automater")
+        tabs.addTab(self._build_twrar_tab(), "TWRAR")
         tabs.addTab(self._build_about_tab(), "About")
 
-    def _build_automater_tab(self) -> QWidget:
+    def _build_twrar_tab(self) -> QWidget:
         central = QWidget()
         root = QVBoxLayout(central)
 
@@ -540,7 +540,7 @@ class MainWindow(QMainWindow):
         browser_cfg["channel"] = self.channel_combo.currentText()
         browser_cfg["headless"] = self.headless_check.isChecked()
 
-        user_data_dir = self.user_data_dir_edit.text().strip() or tempfile.mkdtemp(prefix="automater-profile-")
+        user_data_dir = self.user_data_dir_edit.text().strip() or tempfile.mkdtemp(prefix="twrar-profile-")
         start_url = self.start_url_edit.text().strip() or None
 
         try:
@@ -624,7 +624,7 @@ class MainWindow(QMainWindow):
 
         if report_dir and ctx.step_results:
             _json_path, html_path = generate_report(
-                ctx.step_results, report_dir, run_name=self.name_edit.text().strip() or "Automater run"
+                ctx.step_results, report_dir, run_name=self.name_edit.text().strip() or "TWRAR run"
             )
             self._append_log(f"Report written to {html_path}")
 

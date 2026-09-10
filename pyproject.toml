@@ -3,13 +3,13 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "automater"
+name = "twrar"
 dynamic = ["version"]
 description = "YAML-driven Playwright automation for QA/regression testing and data scraping, with a desktop step recorder GUI."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE.md" }
-authors = [{ name = "Leo Ridgwell" }]
+authors = [{ name = "StuxieDev" }]
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
@@ -26,10 +26,10 @@ dev = ["pytest>=8.0", "pytest-asyncio>=0.24", "Pillow>=10.0"]
 build = ["pyinstaller>=6.10"]
 
 [project.scripts]
-automater = "automater.runner:main"
+twrar = "twrar.runner:main"
 
 [tool.setuptools.packages.find]
-include = ["automater*", "gui*"]
+include = ["twrar*", "gui*"]
 
 [tool.setuptools.dynamic]
 version = { file = "VERSION.md" }

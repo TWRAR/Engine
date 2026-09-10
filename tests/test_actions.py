@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from automater.actions import (
+from twrar.actions import (
     ActionError,
     ExecutionContext,
     available_actions,
@@ -13,13 +13,13 @@ from automater.actions import (
 
 
 def test_resolve_value_substitutes_env_var(monkeypatch):
-    monkeypatch.setenv("AUTOMATER_TEST_SECRET", "hunter2")
-    assert resolve_value("${env:AUTOMATER_TEST_SECRET}") == "hunter2"
+    monkeypatch.setenv("TWRAR_TEST_SECRET", "hunter2")
+    assert resolve_value("${env:TWRAR_TEST_SECRET}") == "hunter2"
 
 
 def test_resolve_value_missing_env_var_becomes_empty(monkeypatch):
-    monkeypatch.delenv("AUTOMATER_TEST_MISSING", raising=False)
-    assert resolve_value("${env:AUTOMATER_TEST_MISSING}") == ""
+    monkeypatch.delenv("TWRAR_TEST_MISSING", raising=False)
+    assert resolve_value("${env:TWRAR_TEST_MISSING}") == ""
 
 
 def test_resolve_value_passes_through_non_strings():
@@ -29,8 +29,8 @@ def test_resolve_value_passes_through_non_strings():
 
 
 def test_resolve_value_embedded_in_larger_string(monkeypatch):
-    monkeypatch.setenv("AUTOMATER_TEST_USER", "leo")
-    assert resolve_value("user=${env:AUTOMATER_TEST_USER}!") == "user=leo!"
+    monkeypatch.setenv("TWRAR_TEST_USER", "leo")
+    assert resolve_value("user=${env:TWRAR_TEST_USER}!") == "user=leo!"
 
 
 async def test_run_step_unknown_action_raises():
@@ -40,17 +40,17 @@ async def test_run_step_unknown_action_raises():
 
 
 async def test_run_step_resolves_env_vars_before_dispatch(monkeypatch):
-    monkeypatch.setenv("AUTOMATER_TEST_VALUE", "resolved")
+    monkeypatch.setenv("TWRAR_TEST_VALUE", "resolved")
     seen = {}
 
     async def fake_handler(ctx, step):
         seen.update(step)
 
-    from automater import actions
+    from twrar import actions
 
     monkeypatch.setitem(actions._REGISTRY, "fake", fake_handler)
     ctx = ExecutionContext(page=None, macros={}, results={})
-    await ctx.run_step({"action": "fake", "value": "${env:AUTOMATER_TEST_VALUE}"})
+    await ctx.run_step({"action": "fake", "value": "${env:TWRAR_TEST_VALUE}"})
 
     assert seen == {"value": "resolved"}
 
@@ -67,7 +67,7 @@ async def test_run_macro_runs_its_steps():
     async def fake_handler(ctx, step):
         calls.append(step["marker"])
 
-    from automater import actions
+    from twrar import actions
 
     macros = {"greet": [{"action": "fake", "marker": "a"}, {"action": "fake", "marker": "b"}]}
     ctx = ExecutionContext(page=None, macros=macros, results={})
@@ -86,7 +86,7 @@ async def test_repeat_runs_nested_steps_n_times():
     async def fake_handler(ctx, step):
         calls.append(1)
 
-    from automater import actions
+    from twrar import actions
 
     actions._REGISTRY["fake"] = fake_handler
     try:
@@ -99,7 +99,7 @@ async def test_repeat_runs_nested_steps_n_times():
 
 
 def test_available_actions_matches_registry():
-    from automater import actions
+    from twrar import actions
 
     assert available_actions() == sorted(actions._REGISTRY.keys())
     assert "click" in available_actions()
@@ -117,7 +117,7 @@ def test_save_results_creates_parent_dir_and_writes_json(tmp_path):
 # --- retry / continue_on_error / step_results / screenshots ----------------
 
 async def test_run_step_records_a_passed_step_result():
-    from automater import actions
+    from twrar import actions
 
     async def fake_handler(ctx, step):
         pass
@@ -139,7 +139,7 @@ async def test_run_step_records_a_passed_step_result():
 
 
 async def test_run_step_retries_until_success():
-    from automater import actions
+    from twrar import actions
 
     calls = {"n": 0}
 
@@ -161,7 +161,7 @@ async def test_run_step_retries_until_success():
 
 
 async def test_run_step_raises_after_exhausting_retries():
-    from automater import actions
+    from twrar import actions
 
     async def always_fails(ctx, step):
         raise RuntimeError("nope")
@@ -179,7 +179,7 @@ async def test_run_step_raises_after_exhausting_retries():
 
 
 async def test_continue_on_error_swallows_the_exception():
-    from automater import actions
+    from twrar import actions
 
     async def always_fails(ctx, step):
         raise RuntimeError("nope")
@@ -196,7 +196,7 @@ async def test_continue_on_error_swallows_the_exception():
 
 
 async def test_on_step_result_hook_is_called():
-    from automater import actions
+    from twrar import actions
 
     async def fake_handler(ctx, step):
         pass
@@ -214,7 +214,7 @@ async def test_on_step_result_hook_is_called():
 
 
 async def test_failure_screenshot_captured_when_screenshot_dir_set(tmp_path):
-    from automater import actions
+    from twrar import actions
 
     class FakePage:
         async def screenshot(self, path):
@@ -238,7 +238,7 @@ async def test_failure_screenshot_captured_when_screenshot_dir_set(tmp_path):
 
 
 async def test_no_screenshot_attempted_without_screenshot_dir():
-    from automater import actions
+    from twrar import actions
 
     async def always_fails(ctx, step):
         raise RuntimeError("boom")

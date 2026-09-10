@@ -35,7 +35,7 @@ class ActionError(RuntimeError):
 @dataclass
 class StepResult:
     """One run_step()'s outcome - collected on ExecutionContext.step_results
-    and handed to generate_report() (see automater/report.py) after a run.
+    and handed to generate_report() (see twrar/report.py) after a run.
     """
 
     index: int

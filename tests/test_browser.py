@@ -1,6 +1,6 @@
 import pytest
 
-from automater import browser
+from twrar import browser
 
 
 def test_find_first_returns_existing_path(tmp_path):

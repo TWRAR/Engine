@@ -1,6 +1,6 @@
 import json
 
-from automater import settings
+from twrar import settings
 
 
 def test_load_settings_creates_file_with_defaults(tmp_path, monkeypatch):

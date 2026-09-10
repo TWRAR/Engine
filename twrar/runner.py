@@ -10,11 +10,11 @@ from typing import Any
 import yaml
 from playwright.async_api import async_playwright
 
-from automater.actions import ExecutionContext, save_results
-from automater.browser import launch_context
-from automater.hotkeys import HotkeyListener
-from automater.report import generate_report
-from automater.validate import validate_config
+from twrar.actions import ExecutionContext, save_results
+from twrar.browser import launch_context
+from twrar.hotkeys import HotkeyListener
+from twrar.report import generate_report
+from twrar.validate import validate_config
 
 
 async def _drain_hotkeys(ctx: ExecutionContext, queue: "asyncio.Queue[dict[str, Any]]", paused: bool) -> bool:
@@ -74,7 +74,7 @@ async def run(config_path: str) -> None:
         raise SystemExit(1)
 
     browser_cfg = config.get("browser", {})
-    user_data_dir = config.get("user_data_dir") or tempfile.mkdtemp(prefix="automater-profile-")
+    user_data_dir = config.get("user_data_dir") or tempfile.mkdtemp(prefix="twrar-profile-")
     macros = config.get("macros", {})
     default_delay_ms = config.get("default_delay_ms", 0)
 
@@ -117,7 +117,7 @@ async def run(config_path: str) -> None:
                 print(f"Results saved to {output_cfg['results_file']}")
             if report_dir:
                 _json_path, html_path = generate_report(
-                    ctx.step_results, report_dir, run_name=config.get("name", "Automater run")
+                    ctx.step_results, report_dir, run_name=config.get("name", "TWRAR run")
                 )
                 print(f"Report written to {html_path}")
             if listener:
@@ -126,7 +126,7 @@ async def run(config_path: str) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Stux.Group site QA/regression + scraping automater")
+    parser = argparse.ArgumentParser(description="Stux.Group site QA/regression + scraping twrar")
     parser.add_argument("--config", required=True, help="Path to a YAML config file")
     parser.add_argument(
         "--validate", action="store_true",

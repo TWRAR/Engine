@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here.
 
+## [2.0.0] - 2026-09-10
+### Changed
+- **Renamed the project to TWRAR** (The Website Recorder And Replayer) and
+  moved it to its own GitHub organization/repo
+  (`github.com/TWRAR/Engine`, formerly `github.com/StuxieDev/Automater`).
+  This is a breaking rename: the `automater` Python package, the
+  `automater` console script, the `AUTOMATER_*` env var convention, and the
+  `Automater.exe`/`AutomaterCLI.exe` standalone executables are now
+  `twrar`, `twrar`, `TWRAR_*`, and `TWRAR.exe`/`TWRARCLI.exe` respectively.
+- New icon and wordmark logo (`assets/icon.*`, `assets/logo.png`), themed
+  red, in the same house style as TIGHC/TS4RLS: a cursor (recording) paired
+  with a play triangle (replaying).
+
 ## [1.1.6] - 2026-09-10
 ### Fixed
 - `automater/paths.py` resolved macOS's per-user data directory using the

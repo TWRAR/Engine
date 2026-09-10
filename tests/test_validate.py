@@ -1,4 +1,4 @@
-from automater.validate import validate_config
+from twrar.validate import validate_config
 
 
 def test_valid_config_has_no_errors():

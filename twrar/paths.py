@@ -1,10 +1,10 @@
-"""Filesystem layout for Automater's per-install runtime state.
+"""Filesystem layout for TWRAR's per-install runtime state.
 
 User data (GUI settings, the disclaimer acknowledgment) lives in the
 platform-standard per-user app directory so it survives repo/git updates:
-  Windows: %APPDATA%\\Automater\\
-  macOS:   ~/Library/Application Support/Automater/
-  Linux:   ~/.local/share/Automater/ (or $XDG_DATA_HOME/Automater/)
+  Windows: %APPDATA%\\TWRAR\\
+  macOS:   ~/Library/Application Support/TWRAR/
+  Linux:   ~/.local/share/TWRAR/ (or $XDG_DATA_HOME/TWRAR/)
 """
 
 import os
@@ -18,7 +18,7 @@ elif sys.platform == "darwin":
 else:
     _base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
 
-USER_DATA_DIR = _base / "Automater"
+USER_DATA_DIR = _base / "TWRAR"
 
 CONFIGS_DIR = USER_DATA_DIR / "configs"
 CONFIGS_DIR.mkdir(parents=True, exist_ok=True)

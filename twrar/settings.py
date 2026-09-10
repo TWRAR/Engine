@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from automater.paths import CONFIGS_DIR
+from twrar.paths import CONFIGS_DIR
 
 SETTINGS_PATH = CONFIGS_DIR / "settings.json"
 

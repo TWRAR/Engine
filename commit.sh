@@ -1,5 +1,5 @@
 #!/bin/bash
-# Automater - Git commit + tag script
+# TWRAR - Git commit + tag script
 # Commits whatever's staged/unstaged and tags it with the version currently
 # in VERSION.md, read dynamically so this script never goes stale the way a
 # hardcoded version number does.
@@ -23,7 +23,7 @@ fi
 if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
     echo "Tag v${VERSION} already exists - skipping."
 else
-    git tag -a "v${VERSION}" -m "Automater v${VERSION}"
+    git tag -a "v${VERSION}" -m "TWRAR v${VERSION}"
     echo "Tagged v${VERSION}."
 fi
 

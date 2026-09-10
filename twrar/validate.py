@@ -4,8 +4,8 @@ launched, instead of failing mid-run on step 40 of 50.
 """
 from __future__ import annotations
 
-from automater.actions import available_actions
-from automater.schema import ACTION_SCHEMA
+from twrar.actions import available_actions
+from twrar.schema import ACTION_SCHEMA
 
 
 def _validate_step(step: object, where: str, macro_names: set[str], errors: list[str]) -> None:

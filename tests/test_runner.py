@@ -3,12 +3,12 @@ import sys
 import pytest
 import yaml
 
-from automater import runner
-from automater.actions import ExecutionContext
+from twrar import runner
+from twrar.actions import ExecutionContext
 
 
 async def _make_ctx(monkeypatch, handler):
-    from automater import actions
+    from twrar import actions
 
     monkeypatch.setitem(actions._REGISTRY, "fake", handler)
     return ExecutionContext(page=None, macros={}, results={})
