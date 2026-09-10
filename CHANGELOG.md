@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [2.0.2] - 2026-09-10
+### Changed
+- Wordmark logo (`assets/logo.png`): tagline is now bold and the same
+  red as the icon/acronym, instead of a lighter/darker shade.
+
 ## [2.0.1] - 2026-09-10
 ### Changed
 - Refined the icon/wordmark logo (`assets/icon.*`, `assets/logo.png`):

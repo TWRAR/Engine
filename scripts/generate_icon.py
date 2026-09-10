@@ -12,9 +12,7 @@ from PIL import Image, ImageDraw, ImageFont
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 ASSETS.mkdir(exist_ok=True)
 
-RED = (220, 38, 38, 255)        # red-600, the project's icon/acronym color
-RED_LIGHT = (185, 28, 28, 255)  # red-700, the tagline color - darker than
-                                 # red-400 so it stays legible on white
+RED = (220, 38, 38, 255)  # red-600 - icon, acronym, and tagline color
 WHITE = (255, 255, 255, 255)
 
 FONT_BOLD = r"C:\Windows\Fonts\arialbd.ttf"
@@ -75,14 +73,14 @@ def draw_wordmark() -> Image.Image:
         fill=RED,
     )
 
-    tagline_font = ImageFont.truetype(FONT_REGULAR, 38)
+    tagline_font = ImageFont.truetype(FONT_BOLD, 38)
     tagline = "The Website Recorder And Replayer"
     tagline_top = acronym_top + (acronym_bbox[3] - acronym_bbox[1]) + 14
     draw.text(
         (text_x, tagline_top),
         tagline,
         font=tagline_font,
-        fill=RED_LIGHT,
+        fill=RED,
     )
 
     return img
