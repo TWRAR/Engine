@@ -7,10 +7,13 @@ from __future__ import annotations
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
-from twrar.metadata import DISCLAIMER_TEXT, PROJECT_NAME
+from twrar.metadata import DISCLAIMER_TEXT
 from twrar.paths import APP_ROOT
+from gui import theme
+
+TERMS_URL = "https://twrar.stuxie.dev/legal/terms"
 
 LOGO_PATH = APP_ROOT / "assets" / "logo.png"
 
@@ -32,7 +35,7 @@ class DisclaimerDialog(QDialog):
             logo_label.setAlignment(Qt.AlignHCenter)
             layout.addWidget(logo_label)
 
-        title = QLabel(PROJECT_NAME)
+        title = QLabel("Before you continue")
         title.setAlignment(Qt.AlignHCenter)
         font = title.font()
         font.setPointSize(font.pointSize() + 2)
@@ -45,6 +48,16 @@ class DisclaimerDialog(QDialog):
         body.setAlignment(Qt.AlignHCenter)
         body.setMinimumWidth(420)
         layout.addWidget(body)
+
+        accent = theme.accent_color(QApplication.instance())
+        terms = QLabel(
+            f'By continuing, you agree to our '
+            f'<a href="{TERMS_URL}" style="color:{accent};">Terms and Ethics of Use</a>.'
+        )
+        terms.setWordWrap(True)
+        terms.setAlignment(Qt.AlignHCenter)
+        terms.setOpenExternalLinks(True)
+        layout.addWidget(terms)
 
         buttons = QDialogButtonBox()
         continue_btn = buttons.addButton("I understand - Continue", QDialogButtonBox.AcceptRole)

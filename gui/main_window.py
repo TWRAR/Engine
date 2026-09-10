@@ -12,6 +12,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QAbstractItemView,
+    QApplication,
     QCheckBox,
     QComboBox,
     QDialog,
@@ -43,13 +44,13 @@ from twrar.paths import APP_ROOT
 from twrar.report import generate_report
 from twrar.settings import load_settings, save_settings
 from twrar.validate import validate_config
+from gui import theme
 from gui.session import BrowserSession, PlaybackController
 from gui.step_forms import StepForm
 
 LOGO_PATH = APP_ROOT / "assets" / "logo.png"
 CHANGELOG_PATH = APP_ROOT / "CHANGELOG.md"
 VERSION_PATH = APP_ROOT / "VERSION.md"
-ACCENT_COLOR = "#7C5CFF"
 
 
 def _read_version() -> str:
@@ -59,7 +60,7 @@ def _read_version() -> str:
         return "unknown"
 
 
-def _render_changelog_html(markdown_text: str) -> str:
+def _render_changelog_html(markdown_text: str, accent_color: str) -> str:
     """Render CHANGELOG.md's `##`/`###` headings, `- ` bullets, `**bold**`,
     and `` `code` `` spans as rich text instead of showing raw markdown."""
 
@@ -88,7 +89,7 @@ def _render_changelog_html(markdown_text: str) -> str:
         if line.startswith("## "):
             close_list()
             parts.append(
-                f'<h2 style="color:{ACCENT_COLOR}; font-size:14pt; margin:14px 0 4px 0;">'
+                f'<h2 style="color:{accent_color}; font-size:14pt; margin:14px 0 4px 0;">'
                 f"{inline(line[3:].strip())}</h2>"
             )
         elif line.startswith("### "):
@@ -269,7 +270,8 @@ class MainWindow(QMainWindow):
         except OSError as exc:
             self.changelog_view.setPlainText(f"(Could not read {CHANGELOG_PATH.name}: {exc})")
             return
-        self.changelog_view.setHtml(_render_changelog_html(text))
+        accent = theme.accent_color(QApplication.instance())
+        self.changelog_view.setHtml(_render_changelog_html(text, accent))
 
     def _apply_persisted_settings(self) -> None:
         idx = self.channel_combo.findText(self.settings["default_browser_channel"])

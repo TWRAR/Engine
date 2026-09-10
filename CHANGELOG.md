@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here.
 
+## [2.1.0] - 2026-09-10
+### Added
+- `gui/theme.py`: a red-tinted light/dark QSS theme matching
+  twrar.stuxie.dev's palette, applied app-wide at startup. Auto-detects
+  light/dark from the system.
+
+### Changed
+- Disclaimer dialog heading now reads "Before you continue" (previously
+  "TWRAR"); added a "By continuing, you agree to our Terms and Ethics of
+  Use" line, linking to twrar.stuxie.dev/legal/terms in the accent color.
+- Changelog viewer's `##` heading color now follows the active theme's
+  accent instead of a hardcoded purple.
+
 ## [2.0.2] - 2026-09-10
 ### Changed
 - Wordmark logo (`assets/logo.png`): tagline is now bold and the same

@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QApplication, QDialog
 
 from twrar.paths import APP_ROOT
 from twrar.settings import confirm_disclaimer, load_settings
+from gui import theme
 from gui.disclaimer import DisclaimerDialog
 from gui.main_window import MainWindow
 
@@ -27,6 +28,7 @@ def main() -> None:
             pass
 
     app = QApplication(sys.argv)
+    app.setStyleSheet(theme.stylesheet(app))
     if ICON_PATH.exists():
         app.setWindowIcon(QIcon(str(ICON_PATH)))
 
