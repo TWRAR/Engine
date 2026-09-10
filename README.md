@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" width="500" alt="TWRAR — The Website Recorder And Replayer">
+  <img src="assets/logo.png" width="300" alt="TWRAR — The Website Recorder And Replayer">
 </p>
 
 # TWRAR — The Website Recorder And Replayer
@@ -164,4 +164,4 @@ Licensed under the GNU General Public License v3.0 or later - see
 
 *Written & Maintained by <img src="https://github.com/StuxieDev.png" height="14" alt="StuxieDev" valign="middle"> [StuxieDev](https://stuxie.dev).*
 
-*<a href="https://projects.stuxie.dev">A StuxieDev Project</a>*
+*[A StuxieDev Project](https://projects.stuxie.dev)*
