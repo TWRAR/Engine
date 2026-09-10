@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [3.1.1] - 2026-09-10
+### Fixed
+- The About tab's repo link and "Update available" link now use the
+  theme's accent color instead of Qt's default (system-themed) link
+  color, matching the "Terms and Ethics of Use" link in the disclaimer
+  dialog.
+
 ## [3.1.0] - 2026-09-10
 ### Added
 - **Update checker** (`twrar/update_check.py`): the About tab now checks

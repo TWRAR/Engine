@@ -256,7 +256,8 @@ class MainWindow(QMainWindow):
         disclaimer_label.setWordWrap(True)
         layout.addWidget(disclaimer_label)
 
-        repo_link = QLabel(f'<a href="{REPO_URL}">{REPO_URL}</a>')
+        accent = theme.accent_color(QApplication.instance())
+        repo_link = QLabel(f'<a href="{REPO_URL}" style="color:{accent};">{REPO_URL}</a>')
         repo_link.setOpenExternalLinks(True)
         layout.addWidget(repo_link)
 
@@ -287,8 +288,10 @@ class MainWindow(QMainWindow):
             info = None
 
         if info:
+            accent = theme.accent_color(QApplication.instance())
             self.update_status_label.setText(
-                f'<a href="{info["url"]}">Update available: v{info["version"]}</a>'
+                f'<a href="{info["url"]}" style="color:{accent};">'
+                f'Update available: v{info["version"]}</a>'
             )
         else:
             self.update_status_label.setText(f"Up to date (v{current}).")
