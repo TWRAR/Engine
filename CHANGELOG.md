@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here.
 
+## [3.3.3] - 2026-09-12
+### Changed
+- `scripts/generate_icon.py` now writes `favicon.ico` straight into the
+  sibling `Website/assets/` checkout instead of this repo's `assets/`
+  (skipped with a message if no sibling checkout is found), since it's
+  purely a Website asset that has no reason to exist here at all - not
+  even gitignored. `.gitignore`'s now-unneeded `assets/favicon.ico` entry
+  is removed along with it.
+
 ## [3.3.2] - 2026-09-12
 ### Changed
 - **Icon/logo window is now an actual rectangle** (`scripts/generate_icon.py`):

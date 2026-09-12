@@ -12,6 +12,10 @@ from PIL import Image, ImageDraw, ImageFont
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 ASSETS.mkdir(exist_ok=True)
 
+# Sibling Website repo's assets/ - only used for favicon.ico, which is a
+# Website-only asset that has no business living in this repo.
+WEBSITE_ASSETS = Path(__file__).resolve().parent.parent.parent / "Website" / "assets"
+
 RED = (220, 38, 38, 255)  # red-600 - icon, acronym, and tagline color
 WHITE = (255, 255, 255, 255)
 
@@ -151,18 +155,22 @@ def main() -> None:
     icon_hires = draw_glyph(1024)
     icon_hires.save(ASSETS / "icon.icns")
 
-    # favicon.ico isn't used by the Engine app itself - it's only for the
-    # Website repo's <link rel="shortcut icon">. Written here (gitignored)
-    # purely so it's reproducible from the same glyph instead of hand-made;
-    # copy it into Website/assets alongside icon.png/logo.png.
-    favicon_sizes = [16, 32, 48]
-    icon_base.save(ASSETS / "favicon.ico", sizes=[(s, s) for s in favicon_sizes])
-
     print(
         f"Wrote {ASSETS / 'logo.png'}, {ASSETS / 'icon.png'}, "
-        f"{ASSETS / 'icon.ico'}, {ASSETS / 'icon.icns'}, "
-        f"{ASSETS / 'favicon.ico'} (gitignored - copy to Website/assets/)"
+        f"{ASSETS / 'icon.ico'}, {ASSETS / 'icon.icns'}"
     )
+
+    # favicon.ico isn't used by the Engine app itself - it's only for the
+    # Website repo's <link rel="shortcut icon"> - so it's written straight
+    # into the sibling Website checkout instead of this repo's assets/.
+    if WEBSITE_ASSETS.is_dir():
+        favicon_sizes = [16, 32, 48]
+        icon_base.save(WEBSITE_ASSETS / "favicon.ico", sizes=[(s, s) for s in favicon_sizes])
+        print(f"Wrote {WEBSITE_ASSETS / 'favicon.ico'}")
+    else:
+        print(f"Skipped favicon.ico - no sibling checkout at {WEBSITE_ASSETS}")
+
+    print("Copy logo.png/icon.png into Website/assets/ too if they changed.")
 
 
 if __name__ == "__main__":
