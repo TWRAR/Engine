@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented here.
 
+## [3.3.2] - 2026-09-12
+### Changed
+- **Icon/logo window is now an actual rectangle** (`scripts/generate_icon.py`):
+  previously a heavily-rounded square ("squircle"); now a wide, slightly
+  rounded-corner rectangle letterboxed within the square icon canvas, closer
+  to a real browser window's proportions.
+- `assets/logo.png`'s wordmark text now aligns to the icon's visible
+  window instead of the padded square it's drawn on - previously the text
+  sat noticeably higher than the icon once the window was letterboxed.
+
+### Fixed
+- `assets/favicon.ico` is no longer committed in this repo - the Engine
+  app itself never uses it (only `icon.ico`/`icon.icns`), it's purely a
+  Website asset. `scripts/generate_icon.py` still (re)generates it
+  locally (now gitignored) so it stays reproducible from the same glyph;
+  copy it into `Website/assets/` by hand same as `icon.png`/`logo.png`.
+
 ## [3.3.1] - 2026-09-12
 ### Changed
 - **Icon/logo (`assets/icon.*`, `assets/logo.png`) redrawn as a browser
