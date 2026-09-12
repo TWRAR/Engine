@@ -61,8 +61,37 @@ jobs:
           name: build-${{ matrix.asset_name }}
           path: dist_out/*
 
+  steam-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build TWRAR_Steam_Assets.zip
+        run: |
+          mkdir -p dist_out
+          cd assets/steam
+          zip -r ../../dist_out/TWRAR_Steam_Assets.zip .
+
+      - name: Publish to steam_assets branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan steam_assets
+          git reset --hard
+          cp dist_out/TWRAR_Steam_Assets.zip .
+          git add TWRAR_Steam_Assets.zip
+          git commit -m "Update Steam assets (${{ github.ref_name }})"
+          git push origin steam_assets --force
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: steam-assets
+          path: dist_out/TWRAR_Steam_Assets.zip
+
   release:
-    needs: [build]
+    needs: [build, steam-assets]
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts

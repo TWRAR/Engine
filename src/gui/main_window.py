@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import html
 import re
+import zipfile
 from pathlib import Path
 from typing import Any, Optional
 
@@ -268,6 +269,10 @@ class MainWindow(QMainWindow):
         repo_link.setOpenExternalLinks(True)
         layout.addWidget(repo_link)
 
+        save_steam_zip_btn = QPushButton("Save Steam artwork (.zip)...")
+        save_steam_zip_btn.clicked.connect(self._save_steam_artwork_zip)
+        layout.addWidget(save_steam_zip_btn, alignment=Qt.AlignLeft)
+
         changelog_header = QHBoxLayout()
         changelog_header.addWidget(QLabel("Changelog"))
         reload_btn = QPushButton("Reload")
@@ -311,6 +316,21 @@ class MainWindow(QMainWindow):
             return
         accent = theme.accent_color(QApplication.instance())
         self.changelog_view.setHtml(_render_changelog_html(text, accent))
+
+    def _save_steam_artwork_zip(self) -> None:
+        dest, _ = QFileDialog.getSaveFileName(
+            self, "Save Steam artwork", "steam-artwork.zip", "Zip archive (*.zip)",
+        )
+        if not dest:
+            return
+        steam_dir = APP_ROOT / "assets" / "steam"
+        try:
+            with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as zf:
+                for path in sorted(steam_dir.iterdir()):
+                    zf.write(path, arcname=path.name)
+            QMessageBox.information(self, "Saved", f"Steam artwork saved to {dest}")
+        except OSError as exc:
+            QMessageBox.critical(self, "Failed", f"Couldn't save the zip: {exc}")
 
     def _apply_persisted_settings(self) -> None:
         idx = self.channel_combo.findText(self.settings["default_browser_channel"])

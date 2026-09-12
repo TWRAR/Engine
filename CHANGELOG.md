@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here.
 
+## [3.5.0] - 2026-09-12
+### Added
+- **Steam library artwork**, matching the sibling TS4RLS project's
+  feature: `scripts/steam_asset_builder.py` generates
+  `assets/steam/{cover,wide_cover,background,logo,logo_horizontal,icon}.png`
+  from the app's own `icon.png`/`logo.png`, so the Steam art never drifts
+  out of sync with the app's branding. The About tab's new **"Save Steam
+  artwork (.zip)..."** button exports it directly. `.github/workflows/
+  release.yml` gets a `steam-assets` job that zips it and publishes to a
+  `steam_assets` branch (and attaches it to the GitHub Release) on every
+  tagged release, same as TS4RLS.
+
 ## [3.4.1] - 2026-09-12
 ### Fixed
 - **QSS pseudo-state border-shorthand bug** (`src/gui/theme.py`): Qt's QSS
