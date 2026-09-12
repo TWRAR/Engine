@@ -32,7 +32,9 @@ back to Brave, then Playwright's own bundled Chromium - see
 
 ### Standalone executable (no Python required)
 
-Windows: `build.bat` — Linux/macOS: `./build.sh`
+```
+python scripts/build_release_files.py
+```
 
 Builds `dist/TWRAR` with PyInstaller - `.exe` on Windows, a macOS `.app`
 bundle, a plain binary on Linux - hand it to someone without Python

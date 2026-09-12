@@ -44,5 +44,6 @@ pytest
    `VERSION.md`.
 6. Pushing the `vX.Y.Z` tag triggers the Release workflow, which builds
    and publishes Windows/macOS/Linux executables automatically. To build
-   locally instead (e.g. to test before pushing), run `build.bat` (or
-   `build.sh`) to refresh the standalone `dist/TWRAR` for this platform.
+   locally instead (e.g. to test before pushing), run
+   `python scripts/build_release_files.py` to refresh the standalone
+   `dist/TWRAR` for this platform.

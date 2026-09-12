@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [3.4.0] - 2026-09-12
+### Changed
+- **`build.bat`/`build.sh` are gone.** `scripts/build_exe.py` is renamed
+  `scripts/build_release_files.py` and now installs its own dependencies
+  (`requirements.txt` + PyInstaller) before building, so it's run directly
+  (`python scripts/build_release_files.py`) instead of through an OS-specific
+  wrapper. `.github/workflows/release.yml` calls it the same way. The now
+  fully-automatic `[build]` extra in `pyproject.toml` is removed as
+  redundant.
+
 ## [3.3.3] - 2026-09-12
 ### Changed
 - `scripts/generate_icon.py` now writes `favicon.ico` straight into the

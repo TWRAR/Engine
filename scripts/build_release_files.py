@@ -1,8 +1,9 @@
 """Builds a standalone TWRAR executable with PyInstaller, for whatever
 platform this is run on.
 
-Run with: python scripts/build_exe.py
-Requires the 'build' extra: pip install -e ".[build]"
+Run with: python scripts/build_release_files.py
+Installs its own dependencies (requirements.txt + PyInstaller) first, no
+separate build.bat/build.sh wrapper or manual `pip install` needed.
 
 PyInstaller can't cross-compile - run this on each platform (Windows,
 macOS, Linux) you want a native build for; that's also what the Release
@@ -17,10 +18,9 @@ Playwright to use its own bundled Chromium needs
 """
 from __future__ import annotations
 
+import subprocess
 import sys
 from pathlib import Path
-
-import PyInstaller.__main__
 
 IS_WINDOWS = sys.platform == "win32"
 IS_MACOS = sys.platform == "darwin"
@@ -61,7 +61,20 @@ COMMON_ARGS = [
 ]
 
 
+def ensure_dependencies() -> None:
+    # No more build.bat/build.sh wrapper to install these first - this
+    # script is now run directly (`python scripts/build_release_files.py`),
+    # so it installs its own runtime + build dependencies before importing
+    # PyInstaller.
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "-r", str(REPO_ROOT / "requirements.txt"), "-q"]
+    )
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller", "-q"])
+
+
 def build_gui() -> None:
+    import PyInstaller.__main__
+
     # The About tab and disclaimer dialog read assets/logo.png, CHANGELOG.md,
     # and VERSION.md at runtime via src.paths.APP_ROOT (which resolves
     # to sys._MEIPASS in a frozen build) - bundle them as data so those
@@ -81,6 +94,8 @@ def build_gui() -> None:
 
 def main() -> None:
     print(f"Building TWRAR v{VERSION} standalone executable for {sys.platform}...")
+    print("Installing build dependencies...")
+    ensure_dependencies()
     build_gui()
     print(f"\nDone. Output in {DIST_DIR}:")
     print("  - TWRAR  (double-click to run - .exe on Windows, .app on macOS)")
