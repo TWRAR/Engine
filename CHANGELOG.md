@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [3.5.3] - 2026-09-12
+
+### Changed
+- Merged `src/scripts/` into `src/build/` — `build_release_files.py` and
+  `generate_icon.py` now sit alongside `steam_asset_builder.py` in one
+  dev-tooling package instead of two.
+
 ## [3.5.2] - 2026-09-12
 
 ### Changed

@@ -1,6 +1,6 @@
 """One-off generator for assets/icon.png, assets/icon.ico, assets/logo.png.
 
-Run with: python src/scripts/generate_icon.py
+Run with: python src/build/generate_icon.py
 Requires Pillow (dev-only; not a runtime dependency of the app itself).
 """
 from __future__ import annotations
