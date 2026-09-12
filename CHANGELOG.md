@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [3.5.5] - 2026-09-12
+
+### Changed
+- Renamed `src/build/generate_icon.py` to `create_website_icon.py` and
+  `src/build/steam_asset_builder.py` to `create_steam_assets.py`, matching
+  `create_release_files.py`'s naming.
+
 ## [3.5.4] - 2026-09-12
 
 ### Changed

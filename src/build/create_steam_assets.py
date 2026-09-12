@@ -4,7 +4,7 @@ from the current assets/icon.png and assets/logo.png, so the Steam art never
 drifts out of sync with the app's own branding.
 
 Run this whenever icon.png or logo.png change:
-    python src/build/steam_asset_builder.py
+    python src/build/create_steam_assets.py
 
 Output (see twrar.stuxie.dev/steam for the asset list and how to apply it):
     assets/steam/cover.png            600x900   portrait grid capsule
@@ -33,7 +33,7 @@ LOGO_PATH = ASSETS_DIR / "logo.png"
 BG_CENTER = (249, 216, 216)
 BG_EDGE = (236, 136, 136)
 
-# logo.png (see src/build/generate_icon.py's draw_wordmark()) is a 220px icon
+# logo.png (see src/build/create_website_icon.py's draw_wordmark()) is a 220px icon
 # square pasted at x=20, then the "TWRAR" / tagline wordmark starting at
 # x=270 -- crop well clear of the icon's right edge (x=240) instead of
 # assuming an exact boundary.
