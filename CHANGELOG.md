@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## [3.5.4] - 2026-09-12
+
+### Changed
+- Renamed `src/build/build_release_files.py` to `create_release_files.py`
+  — it builds the release executable from scratch, it doesn't modify an
+  existing one, so "create" fits better than "build" (which was also
+  confusingly similar to the `src/build/` package name itself).
+
 ## [3.5.3] - 2026-09-12
 
 ### Changed

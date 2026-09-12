@@ -22,7 +22,7 @@ dependencies = [
 
 # This project is run from a clone (`python gui.py`) or as a
 # PyInstaller-built executable (see .github/workflows/release.yml and
-# src/build/build_release_files.py, which installs PyInstaller itself -
+# src/build/create_release_files.py, which installs PyInstaller itself -
 # no separate extra needed) - it isn't published to PyPI.
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pytest-asyncio>=0.24", "Pillow>=10.0"]
