@@ -32,6 +32,10 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Install Qt platform dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0
+
       - name: Build executables
         run: |
           python -m pip install --upgrade pip

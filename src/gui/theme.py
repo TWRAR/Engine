@@ -59,7 +59,12 @@ QTabBar::tab {{
 QTabBar::tab:selected {{
     background: {panel};
     color: {text};
-    border-color: {accent};
+    /* Qt's QSS engine doesn't reliably apply a pseudo-state rule that only
+       overrides one sub-property (border-color) of a shorthand (border)
+       set in the base rule -- redeclaring the full "border" shorthand
+       here, not just its color, is what actually takes effect. */
+    border: 1px solid {accent};
+    border-bottom: none;
 }}
 QTabBar::tab:hover:!selected {{
     color: {text};
@@ -72,14 +77,15 @@ QPushButton {{
     padding: 6px 14px;
 }}
 QPushButton:hover {{
-    border-color: {accent};
+    /* See QTabBar::tab:selected above - same border-shorthand gotcha. */
+    border: 1px solid {accent};
 }}
 QPushButton:pressed {{
     background: {bg_alt};
 }}
 QPushButton:disabled {{
     color: {muted};
-    border-color: {border};
+    border: 1px solid {border};
 }}
 QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QPlainTextEdit, QTextEdit,
 QListWidget, QTableWidget {{
@@ -88,6 +94,9 @@ QListWidget, QTableWidget {{
     border: 1px solid {border};
     border-radius: 4px;
     padding: 2px 4px;
+}}
+QLineEdit:focus, QComboBox:focus {{
+    border: 1px solid {accent};
 }}
 QComboBox::drop-down {{
     border: none;

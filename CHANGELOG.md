@@ -2,6 +2,26 @@
 
 All notable changes to this project are documented here.
 
+## [3.4.1] - 2026-09-12
+### Fixed
+- **QSS pseudo-state border-shorthand bug** (`src/gui/theme.py`): Qt's QSS
+  engine doesn't reliably apply a pseudo-state rule that only overrides
+  one sub-property (`border-color`) of a shorthand (`border`) set in the
+  base rule. `QPushButton:hover`, `QTabBar::tab:selected`, and
+  `QPushButton:disabled` now redeclare the full `border` shorthand
+  instead, so their hover/selected/disabled colors actually take effect
+  (found via a cross-project audit against the sibling TS4RLS project,
+  which hit and fixed the same bug class in its own theme.py).
+- `.github/workflows/release.yml`'s Linux build job didn't install Qt's
+  runtime libraries (`libegl1`/`libopengl0`) before running PyInstaller,
+  unlike `ci.yml` - PyInstaller's analysis phase imports PySide6, so a
+  release build was likely to fail on a fresh Ubuntu runner. Added the
+  same apt-get install step.
+
+### Added
+- `QLineEdit:focus`/`QComboBox:focus` styling (`src/gui/theme.py`) - there
+  was previously no focus-state rule for either.
+
 ## [3.4.0] - 2026-09-12
 ### Changed
 - **`build.bat`/`build.sh` are gone.** `scripts/build_exe.py` is renamed
