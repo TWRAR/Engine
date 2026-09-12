@@ -1,6 +1,6 @@
 """One-off generator for assets/icon.png, assets/icon.ico, assets/logo.png.
 
-Run with: python scripts/generate_icon.py
+Run with: python src/scripts/generate_icon.py
 Requires Pillow (dev-only; not a runtime dependency of the app itself).
 """
 from __future__ import annotations
@@ -9,12 +9,12 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-ASSETS = Path(__file__).resolve().parent.parent / "assets"
+ASSETS = Path(__file__).resolve().parent.parent.parent / "assets"
 ASSETS.mkdir(exist_ok=True)
 
 # Sibling Website repo's assets/ - only used for favicon.ico, which is a
 # Website-only asset that has no business living in this repo.
-WEBSITE_ASSETS = Path(__file__).resolve().parent.parent.parent / "Website" / "assets"
+WEBSITE_ASSETS = Path(__file__).resolve().parent.parent.parent.parent / "Website" / "assets"
 
 RED = (220, 38, 38, 255)  # red-600 - icon, acronym, and tagline color
 WHITE = (255, 255, 255, 255)

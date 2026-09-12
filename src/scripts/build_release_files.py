@@ -1,7 +1,7 @@
 """Builds a standalone TWRAR executable with PyInstaller, for whatever
 platform this is run on.
 
-Run with: python scripts/build_release_files.py
+Run with: python src/scripts/build_release_files.py
 Installs its own dependencies (requirements.txt + PyInstaller) first, no
 separate build.bat/build.sh wrapper or manual `pip install` needed.
 
@@ -25,7 +25,7 @@ from pathlib import Path
 IS_WINDOWS = sys.platform == "win32"
 IS_MACOS = sys.platform == "darwin"
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 VERSION = (REPO_ROOT / "VERSION.md").read_text(encoding="utf-8").strip()
 DIST_DIR = REPO_ROOT / "dist"
 BUILD_DIR = REPO_ROOT / "build"
@@ -63,7 +63,7 @@ COMMON_ARGS = [
 
 def ensure_dependencies() -> None:
     # No more build.bat/build.sh wrapper to install these first - this
-    # script is now run directly (`python scripts/build_release_files.py`),
+    # script is now run directly (`python src/scripts/build_release_files.py`),
     # so it installs its own runtime + build dependencies before importing
     # PyInstaller.
     subprocess.check_call(

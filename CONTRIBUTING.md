@@ -45,9 +45,9 @@ pytest
 6. Pushing the `vX.Y.Z` tag triggers the Release workflow, which builds
    and publishes Windows/macOS/Linux executables automatically. To build
    locally instead (e.g. to test before pushing), run
-   `python scripts/build_release_files.py` to refresh the standalone
+   `python src/scripts/build_release_files.py` to refresh the standalone
    `dist/TWRAR` for this platform.
 7. If `assets/icon.png` or `assets/logo.png` changed, regenerate the Steam
-   library artwork with `python scripts/steam_asset_builder.py` (writes
+   library artwork with `python src/build/steam_asset_builder.py` (writes
    `assets/steam/`) — the Release workflow also rebuilds and publishes
    `TWRAR_Steam_Assets.zip` to the `steam_assets` branch automatically.

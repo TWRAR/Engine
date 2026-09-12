@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here.
 
+## [3.5.2] - 2026-09-12
+
+### Changed
+- Moved `scripts/` into `src/scripts/` (`build_release_files.py`,
+  `generate_icon.py`) so all first-party source lives under `src/`;
+  `steam_asset_builder.py` moved to its own `src/build/` alongside it,
+  matching the sibling TS4RLS project's layout.
+
+### Fixed
+- `.gitignore`'s unanchored `build/`/`dist/` rules were silently
+  swallowing the new `src/build/` package — anchored both to the repo
+  root (`/build/`, `/dist/`), matching the sibling TS4RLS project.
+
 ## [3.5.1] - 2026-09-12
 
 ### Removed
