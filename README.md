@@ -121,6 +121,18 @@ New action types are added by writing one small async function in
 `src/actions.py` decorated with `@action("name")` — nothing else needs
 to change.
 
+## Steam artwork
+
+`assets/steam/` has a full set of custom Steam library artwork (grid
+capsules, hero, logo, icon) for adding TWRAR to your Steam library as a
+non-Steam game.
+
+**[⬇ Download TWRAR_Steam_Assets.zip](https://github.com/TWRAR/Engine/raw/steam_assets/TWRAR_Steam_Assets.zip)**
+— always up to date with the latest release, no need to clone the repo.
+Also available from **[twrar.stuxie.dev/steam](https://twrar.stuxie.dev/steam)**,
+the GUI's **Save Steam artwork (.zip)...** button, or as an asset on any
+[Release](https://github.com/TWRAR/Engine/releases).
+
 ## Notes
 
 - The `press` action sends a simulated key combo to the page itself (e.g.

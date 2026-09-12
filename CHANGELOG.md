@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented here.
 
+## [3.5.1] - 2026-09-12
+
+### Removed
+- **`assets/author.png`** — dead, unreferenced file; the About tab has no
+  author-avatar element (unlike the sibling TS4RLS project's), so nothing
+  ever loaded it.
+
+### Fixed
+- README never documented the Steam artwork feature added in v3.5.0 at
+  all — added a "Steam artwork" section.
+- `.gitignore` was missing `.pytest_cache/` explicitly (still ignored via
+  a global excludesfile, but not documented in this repo's own file).
+- CONTRIBUTING.md's release flow didn't mention regenerating Steam
+  artwork with `scripts/steam_asset_builder.py`.
+
 ## [3.5.0] - 2026-09-12
 ### Added
 - **Steam library artwork**, matching the sibling TS4RLS project's
