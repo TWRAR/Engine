@@ -1,5 +1,5 @@
 # Example config: copy this file per site/task under configs/.
-# Open with the GUI's Load Config button, or run: python gui_main.py
+# Open with the GUI's Load Config button, or run: python gui.py
 
 name: "Stux.Group example QA run"
 
@@ -19,8 +19,13 @@ browser:
   # record_video_size defaults to `viewport` above if omitted.
 
 # Persistent Chrome profile dir - keeps you logged in between runs.
-# Omit to use a fresh temp profile every run.
-user_data_dir: "./.browser-profile"
+# Omitted here: leave this out (or comment out `user_data_dir` below) to use
+# TWRAR's own per-config profile folder instead, under the platform's
+# per-user app-data directory (%APPDATA%\TWRAR\profiles\<config name>\ on
+# Windows), which persists across runs without cluttering wherever this
+# config file happens to live. Uncomment to pin it to a specific path
+# instead (e.g. to share a profile with another tool):
+# user_data_dir: "./.browser-profile"
 
 start_url: "https://stux.group/"
 
@@ -85,8 +90,13 @@ steps:
   - action: screenshot
     path: "output/pricing-page.png"
 
-output:
-  results_file: "output/results.json"
-  # report_dir: a pass/fail report.html + report.json is written here after
-  # every run, with a screenshot auto-captured for any failed/continued step.
-  report_dir: "output/report"
+# Omitted here: leave `output` out entirely (or comment out either field
+# below) to have TWRAR write results/reports under its own per-config
+# app-data folder instead - %APPDATA%\TWRAR\output\<config name>\ on
+# Windows. Uncomment to pin them to specific paths instead:
+# output:
+#   results_file: "output/results.json"
+#   # report_dir: a pass/fail report.html + report.json is written here
+#   # after every run, with a screenshot auto-captured for any
+#   # failed/continued step.
+#   report_dir: "output/report"

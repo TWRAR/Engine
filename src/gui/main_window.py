@@ -4,7 +4,6 @@ from __future__ import annotations
 import asyncio
 import html
 import re
-import tempfile
 from pathlib import Path
 from typing import Any, Optional
 
@@ -37,16 +36,16 @@ from PySide6.QtWidgets import (
 )
 from qasync import asyncSlot
 
-from twrar.actions import ExecutionContext, available_actions
-from twrar.metadata import DISCLAIMER_TEXT, PROJECT_NAME, REPO_URL
-from twrar.paths import APP_ROOT
-from twrar.report import generate_report
-from twrar.settings import load_settings, save_settings
-from twrar.update_check import check_for_update
-from twrar.validate import validate_config
-from gui import theme
-from gui.session import BrowserSession, PlaybackController
-from gui.step_forms import StepForm
+from src.actions import ExecutionContext, available_actions
+from src.metadata import DISCLAIMER_TEXT, PROJECT_FULL_NAME, PROJECT_NAME, REPO_URL
+from src.paths import APP_ROOT, OUTPUT_DIR, PROFILES_DIR
+from src.report import generate_report
+from src.settings import load_settings, save_settings
+from src.update_check import check_for_update
+from src.validate import validate_config
+from src.gui import theme
+from src.gui.session import BrowserSession, PlaybackController
+from src.gui.step_forms import StepForm
 
 LOGO_PATH = APP_ROOT / "assets" / "logo.png"
 CHANGELOG_PATH = APP_ROOT / "CHANGELOG.md"
@@ -58,6 +57,14 @@ def _read_version() -> str:
         return VERSION_PATH.read_text(encoding="utf-8").strip()
     except OSError:
         return "unknown"
+
+
+def _slugify(name: str) -> str:
+    """Turns a config's display name into a filesystem-safe directory name,
+    so each config gets its own subfolder under PROFILES_DIR/OUTPUT_DIR
+    instead of every unnamed config sharing one."""
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", name.strip()).strip("-").lower()
+    return slug or "untitled"
 
 
 def _render_changelog_html(markdown_text: str, accent_color: str) -> str:
@@ -167,7 +174,7 @@ class AddActionDialog(QDialog):
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("TWRAR")
+        self.setWindowTitle(f"{PROJECT_NAME} ({PROJECT_FULL_NAME}) — v{_read_version()}")
 
         self.session = BrowserSession()
         self.session.step_recorded.connect(self._on_step_recorded)
@@ -353,6 +360,7 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(QLabel("Profile dir:"))
         self.user_data_dir_edit = QLineEdit()
+        self.user_data_dir_edit.setPlaceholderText("Blank = TWRAR's per-config app-data folder")
         layout.addWidget(self.user_data_dir_edit, stretch=1)
 
         layout.addWidget(QLabel("Default delay (ms):"))
@@ -362,11 +370,12 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(QLabel("Results file:"))
         self.results_file_edit = QLineEdit()
+        self.results_file_edit.setPlaceholderText("Blank = TWRAR's per-config app-data folder")
         layout.addWidget(self.results_file_edit, stretch=1)
 
         layout.addWidget(QLabel("Report dir:"))
         self.report_dir_edit = QLineEdit()
-        self.report_dir_edit.setPlaceholderText("e.g. output/report - screenshots + HTML/JSON report on failure")
+        self.report_dir_edit.setPlaceholderText("Blank = TWRAR's per-config app-data folder")
         layout.addWidget(self.report_dir_edit, stretch=1)
 
         return box
@@ -517,7 +526,9 @@ class MainWindow(QMainWindow):
         browser_cfg["channel"] = self.channel_combo.currentText()
         browser_cfg["headless"] = self.headless_check.isChecked()
 
-        user_data_dir = self.user_data_dir_edit.text().strip() or tempfile.mkdtemp(prefix="twrar-profile-")
+        user_data_dir = self.user_data_dir_edit.text().strip() or str(
+            PROFILES_DIR / _slugify(self.name_edit.text())
+        )
         start_url = self.start_url_edit.text().strip() or None
 
         try:
@@ -567,8 +578,9 @@ class MainWindow(QMainWindow):
             if proceed != QMessageBox.Yes:
                 return
 
-        report_dir = self.report_dir_edit.text().strip()
-        screenshot_dir = str(Path(report_dir) / "screenshots") if report_dir else None
+        run_slug = _slugify(self.name_edit.text())
+        report_dir = self.report_dir_edit.text().strip() or str(OUTPUT_DIR / run_slug / "report")
+        screenshot_dir = str(Path(report_dir) / "screenshots")
 
         results: dict[str, Any] = {}
         ctx = ExecutionContext(
@@ -593,13 +605,13 @@ class MainWindow(QMainWindow):
         self.pause_btn.setChecked(False)
         await self.playback.run(list(self.steps))
 
-        output_path = self.results_file_edit.text().strip()
-        if output_path and results:
+        output_path = self.results_file_edit.text().strip() or str(OUTPUT_DIR / run_slug / "results.json")
+        if results:
             Path(output_path).parent.mkdir(parents=True, exist_ok=True)
             Path(output_path).write_text(yaml.safe_dump(results, sort_keys=False), encoding="utf-8")
             self._append_log(f"Results saved to {output_path}")
 
-        if report_dir and ctx.step_results:
+        if ctx.step_results:
             _json_path, html_path = generate_report(
                 ctx.step_results, report_dir, run_name=self.name_edit.text().strip() or "TWRAR run"
             )

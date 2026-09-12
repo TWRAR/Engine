@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from twrar.actions import (
+from src.actions import (
     ActionError,
     ExecutionContext,
     available_actions,
@@ -46,7 +46,7 @@ async def test_run_step_resolves_env_vars_before_dispatch(monkeypatch):
     async def fake_handler(ctx, step):
         seen.update(step)
 
-    from twrar import actions
+    from src import actions
 
     monkeypatch.setitem(actions._REGISTRY, "fake", fake_handler)
     ctx = ExecutionContext(page=None, macros={}, results={})
@@ -67,7 +67,7 @@ async def test_run_macro_runs_its_steps():
     async def fake_handler(ctx, step):
         calls.append(step["marker"])
 
-    from twrar import actions
+    from src import actions
 
     macros = {"greet": [{"action": "fake", "marker": "a"}, {"action": "fake", "marker": "b"}]}
     ctx = ExecutionContext(page=None, macros=macros, results={})
@@ -86,7 +86,7 @@ async def test_repeat_runs_nested_steps_n_times():
     async def fake_handler(ctx, step):
         calls.append(1)
 
-    from twrar import actions
+    from src import actions
 
     actions._REGISTRY["fake"] = fake_handler
     try:
@@ -99,7 +99,7 @@ async def test_repeat_runs_nested_steps_n_times():
 
 
 def test_available_actions_matches_registry():
-    from twrar import actions
+    from src import actions
 
     assert available_actions() == sorted(actions._REGISTRY.keys())
     assert "click" in available_actions()
@@ -117,7 +117,7 @@ def test_save_results_creates_parent_dir_and_writes_json(tmp_path):
 # --- retry / continue_on_error / step_results / screenshots ----------------
 
 async def test_run_step_records_a_passed_step_result():
-    from twrar import actions
+    from src import actions
 
     async def fake_handler(ctx, step):
         pass
@@ -139,7 +139,7 @@ async def test_run_step_records_a_passed_step_result():
 
 
 async def test_run_step_retries_until_success():
-    from twrar import actions
+    from src import actions
 
     calls = {"n": 0}
 
@@ -161,7 +161,7 @@ async def test_run_step_retries_until_success():
 
 
 async def test_run_step_raises_after_exhausting_retries():
-    from twrar import actions
+    from src import actions
 
     async def always_fails(ctx, step):
         raise RuntimeError("nope")
@@ -179,7 +179,7 @@ async def test_run_step_raises_after_exhausting_retries():
 
 
 async def test_continue_on_error_swallows_the_exception():
-    from twrar import actions
+    from src import actions
 
     async def always_fails(ctx, step):
         raise RuntimeError("nope")
@@ -196,7 +196,7 @@ async def test_continue_on_error_swallows_the_exception():
 
 
 async def test_on_step_result_hook_is_called():
-    from twrar import actions
+    from src import actions
 
     async def fake_handler(ctx, step):
         pass
@@ -214,7 +214,7 @@ async def test_on_step_result_hook_is_called():
 
 
 async def test_failure_screenshot_captured_when_screenshot_dir_set(tmp_path):
-    from twrar import actions
+    from src import actions
 
     class FakePage:
         async def screenshot(self, path):
@@ -238,7 +238,7 @@ async def test_failure_screenshot_captured_when_screenshot_dir_set(tmp_path):
 
 
 async def test_no_screenshot_attempted_without_screenshot_dir():
-    from twrar import actions
+    from src import actions
 
     async def always_fails(ctx, step):
         raise RuntimeError("boom")

@@ -4,6 +4,7 @@ See VERSION.md for the version number itself.
 """
 
 PROJECT_NAME = "TWRAR"
+PROJECT_FULL_NAME = "The Website Recorder And Replayer"
 REPO_URL = "https://github.com/TWRAR/Engine"
 AUTHOR_NAME = "StuxieDev"
 AUTHOR_URL = "https://stuxie.dev"

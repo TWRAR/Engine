@@ -4,8 +4,8 @@ instead of failing mid-run on step 40 of 50.
 """
 from __future__ import annotations
 
-from twrar.actions import available_actions
-from twrar.schema import ACTION_SCHEMA
+from src.actions import available_actions
+from src.schema import ACTION_SCHEMA
 
 
 def _validate_step(step: object, where: str, macro_names: set[str], errors: list[str]) -> None:

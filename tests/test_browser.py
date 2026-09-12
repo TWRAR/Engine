@@ -2,7 +2,7 @@ import sys
 
 import pytest
 
-from twrar import browser
+from src import browser
 
 windows_only = pytest.mark.skipif(sys.platform != "win32", reason="Windows registry-specific")
 

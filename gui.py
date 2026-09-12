@@ -5,11 +5,11 @@ import qasync
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QDialog
 
-from twrar.paths import APP_ROOT
-from twrar.settings import confirm_disclaimer, load_settings
-from gui import theme
-from gui.disclaimer import DisclaimerDialog
-from gui.main_window import MainWindow
+from src.paths import APP_ROOT
+from src.settings import confirm_disclaimer, load_settings
+from src.gui import theme
+from src.gui.disclaimer import DisclaimerDialog
+from src.gui.main_window import MainWindow
 
 ICON_PATH = APP_ROOT / "assets" / "icon.ico"
 

@@ -49,7 +49,7 @@ config that leaves Playwright to use its own Chromium needs
 ## Usage
 
 ```
-python gui_main.py
+python gui.py
 ```
 
 1. Fill in **Start URL** and **Browser**, click **Start Browser**.
@@ -100,7 +100,7 @@ site/task as a starting point. See its comments for the full config shape.
 
 ## Available actions
 
-See `twrar/actions.py` for the full, authoritative list and each
+See `src/actions.py` for the full, authoritative list and each
 action's fields. Highlights:
 
 - **Navigation**: `goto`, `reload`, `go_back`, `go_forward`
@@ -116,7 +116,7 @@ action's fields. Highlights:
 - **Composition**: `log`, `repeat`, `run_macro`
 
 New action types are added by writing one small async function in
-`twrar/actions.py` decorated with `@action("name")` — nothing else needs
+`src/actions.py` decorated with `@action("name")` — nothing else needs
 to change.
 
 ## Notes

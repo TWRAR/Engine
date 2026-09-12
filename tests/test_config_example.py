@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-from twrar.actions import available_actions
+from src.actions import available_actions
 
 CONFIG_PATH = Path(__file__).resolve().parent.parent / "configs" / "example.yaml"
 

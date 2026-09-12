@@ -2,6 +2,39 @@
 
 All notable changes to this project are documented here.
 
+## [3.3.1] - 2026-09-12
+### Changed
+- **Icon/logo (`assets/icon.*`, `assets/logo.png`) redrawn as a browser
+  window** instead of a plain rounded square: a chrome/tab bar (three dots)
+  across the top, with the recording dot, play triangle, and cursor inside
+  it. `scripts/generate_icon.py` also now generates `assets/favicon.ico`
+  (16/32/48) from the same glyph, so the website favicon no longer has to
+  be hand-maintained separately from the app icon.
+
+## [3.3.0] - 2026-09-10
+### Changed
+- **Blank Profile dir/Results file/Report dir now default under TWRAR's
+  own per-user app-data folder** (`%APPDATA%\TWRAR\profiles\<config
+  name>\` and `%APPDATA%\TWRAR\output\<config name>\` on Windows, the
+  platform equivalent elsewhere) instead of a throwaway OS temp profile
+  and silently skipping results/reports. Each config gets its own
+  subfolder (named after its `name` field) so different configs don't
+  collide. An explicit path in the config or GUI field still overrides
+  this, unchanged.
+- `src/paths.py`: added `PROFILES_DIR` and `OUTPUT_DIR`, alongside the
+  existing `CONFIGS_DIR`/`USER_DATA_DIR`.
+
+## [3.2.0] - 2026-09-10
+### Changed
+- **Reorganized the project layout to match TIGHC/TS4RLS's convention.**
+  The `twrar/` package is now `src/`, the `gui/` package is now
+  `src/gui/`, and `gui_main.py` is now `gui.py` at the repo root. Running
+  from a clone is now `python gui.py` (previously `python gui_main.py`).
+  Purely a structural rename - no behavior changes.
+- The GUI's window title now reads "TWRAR (The Website Recorder And
+  Replayer) — v3.2.0" (name, full name, and version) instead of just
+  "TWRAR".
+
 ## [3.1.1] - 2026-09-10
 ### Fixed
 - The About tab's repo link and "Update available" link now use the

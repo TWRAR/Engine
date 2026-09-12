@@ -1,4 +1,4 @@
-from gui.session import BrowserSession
+from src.gui.session import BrowserSession
 
 
 def test_to_step_click_without_modifiers():

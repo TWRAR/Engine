@@ -1,4 +1,4 @@
-from twrar.validate import validate_config
+from src.validate import validate_config
 
 
 def test_valid_config_has_no_errors():

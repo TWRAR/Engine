@@ -20,30 +20,47 @@ FONT_REGULAR = r"C:\Windows\Fonts\arial.ttf"
 
 
 def draw_glyph(size: int) -> Image.Image:
-    """Cursor + recording dot (recording clicks) and a play triangle
-    (replaying them), white on red."""
+    """A red browser window (rounded frame, chrome bar with three tab-bar
+    dots) containing the recording dot, play triangle, and cursor, white on
+    red - reads as "a browser being recorded/replayed" rather than a bare
+    rounded square."""
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
     radius = size * 0.22
     draw.rounded_rectangle([0, 0, size - 1, size - 1], radius=radius, fill=RED)
 
-    # Three even marks in a clean two-row grid: a recording dot and a play
-    # triangle side by side on top, the cursor spanning the row below - no
-    # touching or crowding between any of the three.
-    dot_r = size * 0.12
-    dot_cx, dot_cy = size * 0.29, size * 0.26
+    # Browser chrome: three tab-bar dots in the top-left mark the top ~20%
+    # of the frame as a title/tab bar, so the shape reads as a browser
+    # window rather than a plain rounded square.
+    chrome_dot_r = size * 0.028
+    chrome_dot_cy = size * 0.10
+    for chrome_dot_cx in (size * 0.14, size * 0.24, size * 0.34):
+        draw.ellipse(
+            [
+                chrome_dot_cx - chrome_dot_r, chrome_dot_cy - chrome_dot_r,
+                chrome_dot_cx + chrome_dot_r, chrome_dot_cy + chrome_dot_r,
+            ],
+            fill=WHITE,
+        )
+
+    # The recording dot, play triangle, and cursor, in the same relative
+    # arrangement as before but compressed into the page area below the
+    # chrome bar - a clean two-row grid with no touching or crowding
+    # between any of the three.
+    dot_r = size * 0.108
+    dot_cx, dot_cy = size * 0.29, size * 0.377
     draw.ellipse(
         [dot_cx - dot_r, dot_cy - dot_r, dot_cx + dot_r, dot_cy + dot_r],
         fill=WHITE,
     )
 
-    play_unit = [(0.54, 0.13), (0.54, 0.39), (0.86, 0.26)]
+    play_unit = [(0.54, 0.260), (0.54, 0.494), (0.86, 0.377)]
     draw.polygon([(x * size, y * size) for x, y in play_unit], fill=WHITE)
 
     cursor_unit = [
-        (0.32, 0.46), (0.32, 0.864), (0.443, 0.767),
-        (0.524, 0.92), (0.598, 0.892), (0.516, 0.739), (0.68, 0.739),
+        (0.32, 0.557), (0.32, 0.920), (0.443, 0.833),
+        (0.524, 0.970), (0.598, 0.945), (0.516, 0.807), (0.68, 0.807),
     ]
     draw.polygon([(x * size, y * size) for x, y in cursor_unit], fill=WHITE)
 
@@ -98,9 +115,13 @@ def main() -> None:
     icon_hires = draw_glyph(1024)
     icon_hires.save(ASSETS / "icon.icns")
 
+    favicon_sizes = [16, 32, 48]
+    icon_base.save(ASSETS / "favicon.ico", sizes=[(s, s) for s in favicon_sizes])
+
     print(
         f"Wrote {ASSETS / 'logo.png'}, {ASSETS / 'icon.png'}, "
-        f"{ASSETS / 'icon.ico'}, {ASSETS / 'icon.icns'}"
+        f"{ASSETS / 'icon.ico'}, {ASSETS / 'icon.icns'}, "
+        f"{ASSETS / 'favicon.ico'}"
     )
 
 

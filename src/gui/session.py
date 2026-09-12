@@ -14,9 +14,9 @@ from typing import Any, Optional
 from PySide6.QtCore import QObject, Signal
 from playwright.async_api import Frame, Page, async_playwright
 
-from twrar.actions import ExecutionContext
-from twrar.browser import launch_context
-from gui.recorder_js import RECORDER_JS
+from src.actions import ExecutionContext
+from src.browser import launch_context
+from src.gui.recorder_js import RECORDER_JS
 
 _NAV_QUIET_WINDOW = 0.7  # seconds; navigations sooner than this after an
 # action are assumed to be that action's own effect, not a separate step.

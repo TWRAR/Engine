@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from twrar.actions import StepResult
-from twrar.report import generate_report
+from src.actions import StepResult
+from src.report import generate_report
 
 
 def _results():

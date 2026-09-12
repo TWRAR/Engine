@@ -16,19 +16,20 @@ first-party data scraping.
 
 ## Adding a new action type
 
-Add a small async function to `twrar/actions.py` decorated with
+Add a small async function to `src/actions.py` decorated with
 `@action("your_action_name")`. It receives the shared `ExecutionContext`
 (page, macros, results dict) and the resolved step dict. No other file
 needs to change - the GUI's playback dispatches by name automatically.
-Add a matching entry to `twrar/schema.py`'s
+Add a matching entry to `src/schema.py`'s
 `ACTION_SCHEMA` too, so the GUI's Add Action dialog and config validation
-(`twrar/validate.py`) both pick it up - `tests/test_schema.py` fails
+(`src/validate.py`) both pick it up - `tests/test_schema.py` fails
 the build if the two ever drift out of sync.
 
 ## Running tests
 
 ```
-pip install -e ".[dev]"
+pip install -r requirements.txt
+pip install pytest pytest-asyncio
 pytest
 ```
 

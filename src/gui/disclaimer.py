@@ -1,7 +1,7 @@
 """First-launch disclaimer gate, shown before the main window until accepted.
 
-Acceptance is persisted via twrar.settings so it only shows once per
-install - see gui_main.py for where this is invoked.
+Acceptance is persisted via src.settings so it only shows once per
+install - see gui.py for where this is invoked.
 """
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication, QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
-from twrar.metadata import DISCLAIMER_TEXT
-from twrar.paths import APP_ROOT
-from gui import theme
+from src.metadata import DISCLAIMER_TEXT
+from src.paths import APP_ROOT
+from src.gui import theme
 
 TERMS_URL = "https://twrar.stuxie.dev/legal/terms"
 

@@ -23,6 +23,16 @@ USER_DATA_DIR = _base / "TWRAR"
 CONFIGS_DIR = USER_DATA_DIR / "configs"
 CONFIGS_DIR.mkdir(parents=True, exist_ok=True)
 
+# Default homes for a run's browser profile and output artifacts (results
+# JSON, reports, screenshots) when a config doesn't give its own
+# user_data_dir/output paths - scoped per config name via gui/main_window.py's
+# _slugify(), so different configs don't collide with each other.
+PROFILES_DIR = USER_DATA_DIR / "profiles"
+PROFILES_DIR.mkdir(parents=True, exist_ok=True)
+
+OUTPUT_DIR = USER_DATA_DIR / "output"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
 # Where bundled read-only app files (assets/, CHANGELOG.md, VERSION.md) live.
 # Under a PyInstaller onefile build, __file__ resolves into the bootloader's
 # temp extraction dir rather than reliably alongside the repo - sys._MEIPASS

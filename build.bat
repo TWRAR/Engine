@@ -2,7 +2,9 @@
 setlocal
 
 echo Installing build dependencies...
-python -m pip install -e ".[build]" -q
+python -m pip install -r requirements.txt -q
+if errorlevel 1 exit /b 1
+python -m pip install pyinstaller -q
 if errorlevel 1 exit /b 1
 
 echo.

@@ -1,5 +1,5 @@
-from twrar.actions import available_actions
-from twrar.schema import ACTION_SCHEMA
+from src.actions import available_actions
+from src.schema import ACTION_SCHEMA
 
 VALID_FIELD_TYPES = {"str", "int", "float", "bool", "choice", "text"}
 

@@ -1,7 +1,7 @@
 import json
 import urllib.error
 
-from twrar import update_check
+from src import update_check
 
 
 def test_parse_version_handles_v_prefix():

@@ -1,8 +1,8 @@
 import importlib
 import sys
 
-from twrar import paths
-from twrar.paths import APP_ROOT, CONFIGS_DIR, USER_DATA_DIR
+from src import paths
+from src.paths import APP_ROOT, CONFIGS_DIR, OUTPUT_DIR, PROFILES_DIR, USER_DATA_DIR
 
 
 def test_user_data_dir_is_named_after_the_project():
@@ -23,6 +23,16 @@ def test_macos_uses_application_support(monkeypatch):
 def test_configs_dir_is_created_under_user_data_dir():
     assert CONFIGS_DIR.parent == USER_DATA_DIR
     assert CONFIGS_DIR.exists()
+
+
+def test_profiles_dir_is_created_under_user_data_dir():
+    assert PROFILES_DIR.parent == USER_DATA_DIR
+    assert PROFILES_DIR.exists()
+
+
+def test_output_dir_is_created_under_user_data_dir():
+    assert OUTPUT_DIR.parent == USER_DATA_DIR
+    assert OUTPUT_DIR.exists()
 
 
 def test_app_root_is_repo_root_when_not_frozen():

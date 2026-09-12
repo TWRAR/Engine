@@ -20,16 +20,23 @@ dependencies = [
     "qasync>=0.27",
 ]
 
+# This project is run from a clone (`python gui.py`) or as a
+# PyInstaller-built executable (see .github/workflows/release.yml and
+# scripts/build_exe.py) - it isn't published to PyPI.
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pytest-asyncio>=0.24", "Pillow>=10.0"]
 build = ["pyinstaller>=6.10"]
 
-[tool.setuptools.packages.find]
-include = ["twrar*", "gui*"]
+[tool.setuptools]
+packages = ["src", "src.gui"]
 
 [tool.setuptools.dynamic]
 version = { file = "VERSION.md" }
 
 [tool.pytest.ini_options]
+# Adds the repo root (this file's directory) to sys.path so `import src.xxx`
+# resolves the same way it does for gui.py, without needing an editable
+# install or a conftest.py sys.path hack.
+pythonpath = ["."]
 testpaths = ["tests"]
 asyncio_mode = "auto"
