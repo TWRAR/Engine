@@ -33,7 +33,7 @@ LOGO_PATH = ASSETS_DIR / "logo.png"
 BG_CENTER = (249, 216, 216)
 BG_EDGE = (236, 136, 136)
 
-# logo.png (see src/build/create_website_icon.py's draw_wordmark()) is a 220px icon
+# logo.png (see src/build/create_website_images.py's draw_wordmark()) is a 220px icon
 # square pasted at x=20, then the "TWRAR" / tagline wordmark starting at
 # x=270 -- crop well clear of the icon's right edge (x=240) instead of
 # assuming an exact boundary.

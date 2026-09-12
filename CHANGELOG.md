@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## [3.5.6] - 2026-09-12
+
+### Changed
+- Renamed `src/build/create_website_icon.py` to `create_website_images.py`
+  and it now writes the sibling Website repo's `icon.png`/`logo.png`
+  directly (previously it only wrote `favicon.ico` there and printed a
+  reminder to copy the other two by hand).
+
 ## [3.5.5] - 2026-09-12
 
 ### Changed

@@ -1,6 +1,8 @@
-"""One-off generator for assets/icon.png, assets/icon.ico, assets/logo.png.
+"""One-off generator for assets/icon.png, assets/icon.ico, assets/icon.icns,
+assets/logo.png, and the sibling Website repo's matching icon.png,
+logo.png, and favicon.ico.
 
-Run with: python src/build/create_website_icon.py
+Run with: python src/build/create_website_images.py
 Requires Pillow (dev-only; not a runtime dependency of the app itself).
 """
 from __future__ import annotations
@@ -12,8 +14,10 @@ from PIL import Image, ImageDraw, ImageFont
 ASSETS = Path(__file__).resolve().parent.parent.parent / "assets"
 ASSETS.mkdir(exist_ok=True)
 
-# Sibling Website repo's assets/ - only used for favicon.ico, which is a
-# Website-only asset that has no business living in this repo.
+# Sibling Website repo's assets/ - gets its own copy of icon.png/logo.png
+# (so the site never drifts out of sync with the app's branding) plus
+# favicon.ico, which is a Website-only asset that has no business living
+# in this repo.
 WEBSITE_ASSETS = Path(__file__).resolve().parent.parent.parent.parent / "Website" / "assets"
 
 RED = (220, 38, 38, 255)  # red-600 - icon, acronym, and tagline color
@@ -160,17 +164,21 @@ def main() -> None:
         f"{ASSETS / 'icon.ico'}, {ASSETS / 'icon.icns'}"
     )
 
-    # favicon.ico isn't used by the Engine app itself - it's only for the
-    # Website repo's <link rel="shortcut icon"> - so it's written straight
-    # into the sibling Website checkout instead of this repo's assets/.
+    # The website gets its own copies of icon.png/logo.png (kept in sync
+    # with the app's own branding) plus favicon.ico, which isn't used by
+    # the Engine app itself - it's only for the Website repo's
+    # <link rel="shortcut icon">.
     if WEBSITE_ASSETS.is_dir():
         favicon_sizes = [16, 32, 48]
         icon_base.save(WEBSITE_ASSETS / "favicon.ico", sizes=[(s, s) for s in favicon_sizes])
-        print(f"Wrote {WEBSITE_ASSETS / 'favicon.ico'}")
+        icon_base.save(WEBSITE_ASSETS / "icon.png")
+        logo.save(WEBSITE_ASSETS / "logo.png")
+        print(
+            f"Wrote {WEBSITE_ASSETS / 'favicon.ico'}, "
+            f"{WEBSITE_ASSETS / 'icon.png'}, {WEBSITE_ASSETS / 'logo.png'}"
+        )
     else:
-        print(f"Skipped favicon.ico - no sibling checkout at {WEBSITE_ASSETS}")
-
-    print("Copy logo.png/icon.png into Website/assets/ too if they changed.")
+        print(f"Skipped Website assets - no sibling checkout at {WEBSITE_ASSETS}")
 
 
 if __name__ == "__main__":
