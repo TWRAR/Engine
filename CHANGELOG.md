@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [3.5.7] - 2026-09-12
+
+### Changed
+- Renamed `src/build/create_website_images.py` to `create_project_assets.py`.
+
 ## [3.5.6] - 2026-09-12
 
 ### Changed

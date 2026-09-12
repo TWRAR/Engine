@@ -2,7 +2,7 @@
 assets/logo.png, and the sibling Website repo's matching icon.png,
 logo.png, and favicon.ico.
 
-Run with: python src/build/create_website_images.py
+Run with: python src/build/create_project_assets.py
 Requires Pillow (dev-only; not a runtime dependency of the app itself).
 """
 from __future__ import annotations
