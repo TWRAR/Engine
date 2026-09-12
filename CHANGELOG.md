@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here.
 
+## [3.6.0] - 2026-09-13
+
+### Added
+- `src/build/create_project_assets.py` now also writes `favicon.ico` at
+  the Website repo's root, not just under `assets/` — browsers request
+  `/favicon.ico` directly as a fallback regardless of the `<link
+  rel="icon">` tag in `<head>`, so the site-root copy needs to stay in
+  sync with the app's branding too.
+
 ## [3.5.7] - 2026-09-12
 
 ### Changed
