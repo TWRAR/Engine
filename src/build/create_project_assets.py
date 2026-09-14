@@ -72,11 +72,15 @@ def draw_glyph(size: int) -> Image.Image:
 
     # Browser chrome: three tab-bar dots in the top-left mark the top ~20%
     # of the window as a title/tab bar, so the shape reads as a browser
-    # window rather than a plain rectangle.
+    # window rather than a plain rectangle. Positioned from the window's
+    # actual left edge (x0) rather than through px()'s horizontally-
+    # centered sub-square (meant for the interior glyph below) -- px()
+    # left them drifting well right of the true corner, off-center from
+    # what "top-left" chrome dots should look like.
     chrome_dot_r = sub * 0.028
     chrome_dot_cy = py(0.10)
-    for fx in (0.14, 0.24, 0.34):
-        chrome_dot_cx = px(fx)
+    for fx in (0.10, 0.20, 0.30):
+        chrome_dot_cx = x0 + fx * sub
         draw.ellipse(
             [
                 chrome_dot_cx - chrome_dot_r, chrome_dot_cy - chrome_dot_r,

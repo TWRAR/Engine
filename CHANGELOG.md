@@ -2,6 +2,24 @@
 
 All notable changes to this project are documented here.
 
+## [3.6.2] - 2026-09-14
+
+### Fixed
+- Disabled UPX compression (`--noupx`) in the release build's PyInstaller
+  args (`create_release_files.py`). UPX-compressed executables, combined
+  with bundling all of Playwright's automation driver, are a common
+  trigger for Defender's ML heuristic — this build was being flagged and
+  quarantined as `Trojan:Win32/Wacatac.B!ml`, a known PyInstaller false
+  positive.
+- **Icon's three browser-chrome dots weren't aligned to the top-left
+  corner** (`create_project_assets.py`): they were positioned through the
+  helper meant for the interior glyph (record dot/play triangle/cursor),
+  which centers things in a sub-square offset ~25% of the window's height
+  in from the left edge — leaving a large, wrong-looking gap before the
+  first dot instead of hugging the corner. Repositioned them relative to
+  the window's actual left edge. Regenerated `icon.png`/`.ico`/`.icns`/
+  `logo.png` and synced the corrected copies to the sibling Website repo.
+
 ## [3.6.1] - 2026-09-14
 
 ### Fixed

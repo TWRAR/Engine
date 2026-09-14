@@ -52,6 +52,12 @@ def _icon_args() -> list[str]:
 COMMON_ARGS = [
     "--onefile",
     "--noconfirm",
+    # UPX-compressed executables are heavily associated with malware
+    # packers and are a common trigger for AV/Defender heuristic false
+    # positives -- especially combined with bundling all of Playwright's
+    # browser-automation driver, which already looks RAT-shaped to those
+    # heuristics.
+    "--noupx",
     f"--distpath={DIST_DIR}",
     f"--workpath={BUILD_DIR}",
     f"--specpath={BUILD_DIR}",
