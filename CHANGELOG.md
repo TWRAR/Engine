@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## [3.6.3] - 2026-09-14
+
+### Fixed
+- Regenerated `assets/steam/*` (`create_steam_assets.py`) from the
+  corrected icon/logo (v3.6.2) — the Steam library artwork's tiled
+  background pattern and icon marks were still showing the old
+  off-center chrome dots.
+
 ## [3.6.2] - 2026-09-14
 
 ### Fixed
