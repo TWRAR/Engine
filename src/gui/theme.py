@@ -6,6 +6,12 @@ from __future__ import annotations
 from PySide6.QtGui import QPalette
 from PySide6.QtWidgets import QApplication
 
+from src.paths import APP_ROOT
+
+# QSS's url() needs forward slashes even on Windows -- backslashes get
+# parsed as escape characters and silently break the rule.
+_CHECK_ICON = str(APP_ROOT / "assets" / "checkbox_check.png").replace("\\", "/")
+
 _LIGHT = {
     "bg": "#fbf6f6",
     "bg_alt": "#f5eae9",
@@ -113,6 +119,39 @@ QListWidget::item:selected, QTableWidget::item:selected {{
 }}
 QCheckBox, QRadioButton, QLabel {{
     color: {text};
+    spacing: 6px;
+}}
+QCheckBox::indicator {{
+    width: 17px;
+    height: 17px;
+    border: 1px solid {border};
+    border-radius: 3px;
+    background: {panel};
+}}
+QCheckBox::indicator:checked {{
+    background: {accent};
+    border: 1px solid {accent};
+    image: url({check_icon});
+}}
+QCheckBox::indicator:hover {{
+    border: 1px solid {accent};
+}}
+QRadioButton::indicator {{
+    width: 15px;
+    height: 15px;
+    border: 1px solid {border};
+    border-radius: 8px;
+    background: {panel};
+}}
+QRadioButton::indicator:checked {{
+    border: 1px solid {accent};
+    background: qradialgradient(
+        cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5,
+        stop:0 {accent}, stop:0.5 {accent}, stop:0.6 {panel}, stop:1 {panel}
+    );
+}}
+QRadioButton::indicator:hover {{
+    border: 1px solid {accent};
 }}
 QGroupBox {{
     border: 1px solid {border};
@@ -174,7 +213,7 @@ def tokens(app: QApplication) -> dict[str, str]:
 
 
 def stylesheet(app: QApplication) -> str:
-    return _QSS_TEMPLATE.format(**tokens(app))
+    return _QSS_TEMPLATE.format(check_icon=_CHECK_ICON, **tokens(app))
 
 
 def accent_color(app: QApplication) -> str:

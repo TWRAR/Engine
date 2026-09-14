@@ -359,44 +359,52 @@ class MainWindow(QMainWindow):
         save_settings(self.settings)
 
     def _build_config_bar(self) -> QWidget:
+        # Two logical rows instead of one long horizontal strip: identity/
+        # browser settings up top, output paths/timing below -- the single-
+        # row version overflowed at normal window widths once every field
+        # was visible at once.
         box = QGroupBox("Config")
-        layout = QHBoxLayout(box)
+        outer = QVBoxLayout(box)
 
-        layout.addWidget(QLabel("Name:"))
+        identity_row = QHBoxLayout()
+        identity_row.addWidget(QLabel("Name:"))
         self.name_edit = QLineEdit()
-        layout.addWidget(self.name_edit)
+        identity_row.addWidget(self.name_edit)
 
-        layout.addWidget(QLabel("Start URL:"))
+        identity_row.addWidget(QLabel("Start URL:"))
         self.start_url_edit = QLineEdit()
-        layout.addWidget(self.start_url_edit, stretch=2)
+        identity_row.addWidget(self.start_url_edit, stretch=2)
 
-        layout.addWidget(QLabel("Browser:"))
+        identity_row.addWidget(QLabel("Browser:"))
         self.channel_combo = QComboBox()
         self.channel_combo.addItems(["default", "brave", "chrome", "edge", "firefox"])
-        layout.addWidget(self.channel_combo)
+        identity_row.addWidget(self.channel_combo)
 
         self.headless_check = QCheckBox("Headless")
-        layout.addWidget(self.headless_check)
+        identity_row.addWidget(self.headless_check)
+        outer.addLayout(identity_row)
 
-        layout.addWidget(QLabel("Profile dir:"))
+        paths_row = QHBoxLayout()
+        paths_row.addWidget(QLabel("Profile dir:"))
         self.user_data_dir_edit = QLineEdit()
         self.user_data_dir_edit.setPlaceholderText("Blank = TWRAR's per-config app-data folder")
-        layout.addWidget(self.user_data_dir_edit, stretch=1)
+        paths_row.addWidget(self.user_data_dir_edit, stretch=1)
 
-        layout.addWidget(QLabel("Default delay (ms):"))
+        paths_row.addWidget(QLabel("Default delay (ms):"))
         self.default_delay_edit = QLineEdit("0")
         self.default_delay_edit.setFixedWidth(60)
-        layout.addWidget(self.default_delay_edit)
+        paths_row.addWidget(self.default_delay_edit)
 
-        layout.addWidget(QLabel("Results file:"))
+        paths_row.addWidget(QLabel("Results file:"))
         self.results_file_edit = QLineEdit()
         self.results_file_edit.setPlaceholderText("Blank = TWRAR's per-config app-data folder")
-        layout.addWidget(self.results_file_edit, stretch=1)
+        paths_row.addWidget(self.results_file_edit, stretch=1)
 
-        layout.addWidget(QLabel("Report dir:"))
+        paths_row.addWidget(QLabel("Report dir:"))
         self.report_dir_edit = QLineEdit()
         self.report_dir_edit.setPlaceholderText("Blank = TWRAR's per-config app-data folder")
-        layout.addWidget(self.report_dir_edit, stretch=1)
+        paths_row.addWidget(self.report_dir_edit, stretch=1)
+        outer.addLayout(paths_row)
 
         return box
 

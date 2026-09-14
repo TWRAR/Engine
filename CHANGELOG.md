@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented here.
 
+## [3.6.1] - 2026-09-14
+
+### Fixed
+- **Config bar reorganized** (`main_window.py`): the 8 fields above the
+  step editor were crammed into a single horizontal row that overflowed at
+  normal window widths. Split into two logical rows — identity/browser
+  (Name, Start URL, Browser, Headless) and output paths/timing (Profile
+  dir, Default delay, Results file, Report dir).
+- **Checkboxes and radio buttons weren't themed at all** — `theme.py` never
+  styled `QCheckBox`/`QRadioButton` indicators beyond text color, so they
+  fell back to plain OS widgets instead of matching the app's accent color
+  like every other control. Added accent-colored indicator styling for
+  both (same pattern as the sibling TS4RLS/TIGHC projects), plus the
+  `checkbox_check.png` icon asset it needs.
+
 ## [3.6.0] - 2026-09-13
 
 ### Added
