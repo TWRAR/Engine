@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [3.6.4] - 2026-09-15
+
+### Fixed
+- `README.md`'s footer credit now uses the hosted `https://global.media.stuxie.dev/icon.png` StuxieDev icon instead of the live GitHub avatar shorthand
+
 ## [3.6.3] - 2026-09-14
 
 ### Fixed
