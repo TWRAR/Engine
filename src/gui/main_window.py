@@ -68,7 +68,7 @@ def _slugify(name: str) -> str:
     return slug or "untitled"
 
 
-def _render_changelog_html(markdown_text: str, accent_color: str) -> str:
+def _render_changelog_html(markdown_text: str, accent_color: str, dark: bool = False) -> str:
     """Render CHANGELOG.md's `##`/`###` headings, `- ` bullets, `**bold**`,
     and `` `code` `` spans as rich text instead of showing raw markdown."""
 
@@ -92,7 +92,7 @@ def _render_changelog_html(markdown_text: str, accent_color: str) -> str:
             parts.append("</ul>")
             in_list = False
 
-    for line in markdown_text.splitlines():
+    for line in theme.sort_changelog_sections(markdown_text).splitlines():
         stripped = line.strip()
         if line.startswith("## "):
             close_list()
@@ -102,9 +102,11 @@ def _render_changelog_html(markdown_text: str, accent_color: str) -> str:
             )
         elif line.startswith("### "):
             close_list()
+            section = line[4:].strip()
+            color = theme.changelog_section_color(section, dark) or "gray"
             parts.append(
-                f'<h3 style="color:gray; font-size:11pt; margin:8px 0 2px 0;">'
-                f"{inline(line[4:].strip())}</h3>"
+                f'<h3 style="color:{color}; font-size:11pt; margin:8px 0 2px 0;">'
+                f"{inline(section)}</h3>"
             )
         elif line.startswith("# "):
             continue  # top-level title is already shown above as its own label
@@ -314,8 +316,9 @@ class MainWindow(QMainWindow):
         except OSError as exc:
             self.changelog_view.setPlainText(f"(Could not read {CHANGELOG_PATH.name}: {exc})")
             return
-        accent = theme.accent_color(QApplication.instance())
-        self.changelog_view.setHtml(_render_changelog_html(text, accent))
+        app = QApplication.instance()
+        accent = theme.accent_color(app)
+        self.changelog_view.setHtml(_render_changelog_html(text, accent, theme.is_dark_mode(app)))
 
     def _save_steam_artwork_zip(self) -> None:
         dest, _ = QFileDialog.getSaveFileName(

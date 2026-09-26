@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [3.6.5] - 2026-09-26
+
+### Changed
+- The in-app changelog now sorts each release's `###` sections into a fixed order at render time - Added, Changed, Fixed, Removed, Security, Deprecated, unknown types last - and colours each heading with the shared palette (Added `#2ecc71`, Changed `#3ba7ff`, Fixed `#ffa64d`, Removed `#ff4d4d`, Security `#b06bff`, Deprecated `#8a8a94`; darker shades in light mode).
+- `README.md`'s license copyright notice changed from StuxieDev to Stux.Group.
+- CHANGELOG sections reordered to Added, Changed, Fixed, Removed, Security, Deprecated.
+
+### Security
+- `src/build/create_release_files.py` pins PyInstaller to `6.22.2` instead of installing whatever the latest release is, keeping release builds reproducible and never pulling in an unreviewed PyInstaller version.
+
 ## [3.6.4] - 2026-09-15
 
 ### Fixed
@@ -107,11 +117,6 @@ All notable changes to this project are documented here.
 
 ## [3.5.1] - 2026-09-12
 
-### Removed
-- **`assets/author.png`** — dead, unreferenced file; the About tab has no
-  author-avatar element (unlike the sibling TS4RLS project's), so nothing
-  ever loaded it.
-
 ### Fixed
 - README never documented the Steam artwork feature added in v3.5.0 at
   all — added a "Steam artwork" section.
@@ -119,6 +124,11 @@ All notable changes to this project are documented here.
   a global excludesfile, but not documented in this repo's own file).
 - CONTRIBUTING.md's release flow didn't mention regenerating Steam
   artwork with `scripts/steam_asset_builder.py`.
+
+### Removed
+- **`assets/author.png`** — dead, unreferenced file; the About tab has no
+  author-avatar element (unlike the sibling TS4RLS project's), so nothing
+  ever loaded it.
 
 ## [3.5.0] - 2026-09-12
 ### Added
@@ -133,6 +143,10 @@ All notable changes to this project are documented here.
   tagged release, same as TS4RLS.
 
 ## [3.4.1] - 2026-09-12
+### Added
+- `QLineEdit:focus`/`QComboBox:focus` styling (`src/gui/theme.py`) - there
+  was previously no focus-state rule for either.
+
 ### Fixed
 - **QSS pseudo-state border-shorthand bug** (`src/gui/theme.py`): Qt's QSS
   engine doesn't reliably apply a pseudo-state rule that only overrides
@@ -147,10 +161,6 @@ All notable changes to this project are documented here.
   unlike `ci.yml` - PyInstaller's analysis phase imports PySide6, so a
   release build was likely to fail on a fresh Ubuntu runner. Added the
   same apt-get install step.
-
-### Added
-- `QLineEdit:focus`/`QComboBox:focus` styling (`src/gui/theme.py`) - there
-  was previously no focus-state rule for either.
 
 ## [3.4.0] - 2026-09-12
 ### Changed
@@ -237,14 +247,6 @@ All notable changes to this project are documented here.
   than shown as an error.
 
 ## [3.0.0] - 2026-09-10
-### Removed
-- **The CLI (`main.py`/`TWRARCLI`) is discontinued.** TWRAR is GUI-only
-  from here on. Also removed as a consequence: the `hotkeys` config key
-  (global system-wide hotkeys only ever took effect via the CLI - the GUI
-  has always used its own Play/Pause/Stop buttons instead) and the
-  `keyboard` dependency. The GUI's Macros panel is unaffected; only the
-  Hotkeys editor next to it is gone.
-
 ### Added
 - **Linux and macOS support.** `twrar/browser.py`'s Windows-only `winreg`
   import is now conditional, with Brave/Chrome/Edge/Firefox path
@@ -257,6 +259,14 @@ All notable changes to this project are documented here.
   and publishes Windows/macOS/Linux executables to a GitHub Release
   automatically.
 - CI (`ci.yml`) now runs the test suite on Windows, macOS, and Linux.
+
+### Removed
+- **The CLI (`main.py`/`TWRARCLI`) is discontinued.** TWRAR is GUI-only
+  from here on. Also removed as a consequence: the `hotkeys` config key
+  (global system-wide hotkeys only ever took effect via the CLI - the GUI
+  has always used its own Play/Pause/Stop buttons instead) and the
+  `keyboard` dependency. The GUI's Macros panel is unaffected; only the
+  Hotkeys editor next to it is gone.
 
 ## [2.1.0] - 2026-09-10
 ### Added

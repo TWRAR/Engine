@@ -143,7 +143,7 @@ the GUI's **Save Steam artwork (.zip)...** button, or as an asset on any
 
 ## License
 
-Copyright (C) 2026 StuxieDev
+Copyright (C) 2026 Stux.Group
 
 Licensed under the GNU General Public License v3.0 or later - see
 [`LICENSE.md`](LICENSE.md) for the full text.
