@@ -58,3 +58,10 @@ def test_check_for_update_returns_none_on_missing_tag_name(monkeypatch):
         lambda *a, **k: _FakeResponse({}),
     )
     assert update_check.check_for_update("3.0.0") is None
+
+
+def test_parse_version_handles_date_versions():
+    assert update_check._parse_version("v26.10.23") == (26, 10, 23)
+    assert update_check._parse_version("26.10.23-1") == (26, 10, 23, 1)
+    assert update_check._parse_version("v26.10.23-1") > update_check._parse_version("26.10.23")
+    assert update_check._parse_version("v26.10.23") > update_check._parse_version("3.6.5")

@@ -22,13 +22,14 @@ class UpdateInfo(TypedDict):
 
 
 def _parse_version(text: str) -> tuple[int, ...]:
-    """"v3.10.2" / "3.10.2" -> (3, 10, 2). Non-numeric segments become 0
-    rather than raising, so an unexpected tag format just compares low."""
+    """"v3.10.2" / "3.10.2" -> (3, 10, 2); Date Versions "v26.10.23-1" ->
+    (26, 10, 23, 1). Non-numeric segments become 0 rather than raising, so an
+    unexpected tag format just compares low."""
     text = text.strip()
     if text[:1] in ("v", "V"):
         text = text[1:]
     parts = []
-    for chunk in text.split("."):
+    for chunk in text.replace("-", ".").split("."):
         digits = "".join(ch for ch in chunk if ch.isdigit())
         parts.append(int(digits) if digits else 0)
     return tuple(parts)

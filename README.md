@@ -141,6 +141,10 @@ the GUI's **Save Steam artwork (.zip)...** button, or as an asset on any
 - Credentials referenced in configs should use `${env:VAR_NAME}` rather
   than being hardcoded, so config files stay safe to commit.
 
+## Versioning
+
+This project uses [Date Versioning](https://datevers.ing): each release is numbered by its UTC release date as `YY.MM.DD` (for example `26.10.23`), with `-1`, `-2`… for later releases the same day. See [CHANGELOG.md](CHANGELOG.md) for what changed in each release.
+
 ## License
 
 Copyright (C) 2026 Stux.Group
